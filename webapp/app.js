@@ -266,26 +266,51 @@
       return;
     }
 
-    // Group by month
+    // Group by month (projecting active subscriptions across all months from start date to today)
     const months = {};
+    
+    // Find oldest started_at date (default to Jan 2026 if empty or newer)
+    let startDate = new Date('2026-01-01');
     filtered.forEach(sub => {
-      const dateStr = sub.started_at || sub.created_at;
-      const date = new Date(dateStr);
-      // Fallback if date is invalid
-      const monthKey = isNaN(date.getTime())
-        ? 'Active Subscriptions'
-        : date.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
-        
-      if (!months[monthKey]) months[monthKey] = [];
-      months[monthKey].push(sub);
+      if (sub.started_at) {
+        const d = new Date(sub.started_at);
+        if (!isNaN(d.getTime()) && d < startDate) {
+          startDate = new Date(d.getFullYear(), d.getMonth(), 1);
+        }
+      }
     });
 
+    const today = new Date();
+    const endDate = new Date(today.getFullYear(), today.getMonth(), 1);
+
+    // Generate all months from startDate to endDate
+    let current = new Date(startDate);
+    while (current <= endDate) {
+      const monthKey = current.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
+      months[monthKey] = [];
+      
+      // Find subscriptions active in this month
+      filtered.forEach(sub => {
+        if (sub.started_at) {
+          const subStart = new Date(sub.started_at);
+          const subStartMonth = new Date(subStart.getFullYear(), subStart.getMonth(), 1);
+          if (subStartMonth <= current) {
+            months[monthKey].push(sub);
+          }
+        } else {
+          // Fallback for subscriptions without start date: show in current month
+          if (current.getTime() === endDate.getTime()) {
+            months[monthKey].push(sub);
+          }
+        }
+      });
+
+      // Move to next month
+      current.setMonth(current.getMonth() + 1);
+    }
+
     // Sort month categories chronologically (reversed: newer month first)
-    const sortedMonths = Object.keys(months).sort((a, b) => {
-      if (a === 'Active Subscriptions') return 1;
-      if (b === 'Active Subscriptions') return -1;
-      return new Date(b) - new Date(a);
-    });
+    const sortedMonths = Object.keys(months).sort((a, b) => new Date(b) - new Date(a));
 
     sortedMonths.forEach(monthKey => {
       const monthSubs = months[monthKey];
