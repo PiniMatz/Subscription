@@ -8,7 +8,7 @@ import json
 import os
 import sqlite3
 import sys
-from datetime import datetime
+from datetime import datetime, timezone
 
 def monthly_equiv(price: float, cycle: str) -> float:
     """ponytail: simple cycle-to-monthly conversion."""
@@ -30,7 +30,7 @@ def upsert_sub(db_path: str, vendor: str, name: str, category: str, price: float
     c = conn.cursor()
 
     equiv = monthly_equiv(price, cycle)
-    now = datetime.utcnow().isoformat() + 'Z'
+    now = datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z')
 
     c.execute('''
         INSERT INTO subscriptions
