@@ -8,7 +8,7 @@ const PORT = process.env.PORT || 3000;
 const AUTH_TOKEN = "demo-session-token-2026";
 
 // Path to SQLite Database
-const dbPath = path.join(__dirname, 'subscriptions', 'data', 'subs.sqlite');
+const dbPath = path.join(__dirname, 'data', 'subs.sqlite');
 console.log("Connecting to SQLite database at:", dbPath);
 let db;
 try {
@@ -49,7 +49,7 @@ function calculateMonthlyEquiv(price, cycle) {
 
 // Serve static webapp files but inject AUTH_TOKEN in index.html first
 app.get('/', (req, res) => {
-  const indexPath = path.join(__dirname, 'subscriptions', 'webapp', 'index.html');
+  const indexPath = path.join(__dirname, 'webapp', 'index.html');
   try {
     let html = fs.readFileSync(indexPath, 'utf8');
     const tokenScript = `<script>window.AUTH_TOKEN = "${AUTH_TOKEN}";</script>`;
@@ -62,7 +62,7 @@ app.get('/', (req, res) => {
 });
 
 // Serve other static assets normally
-app.use(express.static(path.join(__dirname, 'subscriptions', 'webapp')));
+app.use(express.static(path.join(__dirname, 'webapp')));
 
 // --- API ROUTES (Protected) ---
 

@@ -6,10 +6,10 @@ yarn-error.log*
 .pnpm-debug.log*
 
 # Databases
-subscriptions/data/subs.sqlite
-subscriptions/data/*.sqlite-journal
-subscriptions/data/*.sqlite-shm
-subscriptions/data/*.sqlite-wal
+data/subs.sqlite
+data/*.sqlite-journal
+data/*.sqlite-shm
+data/*.sqlite-wal
 
 # IDE / Editor configs
 .vscode/
