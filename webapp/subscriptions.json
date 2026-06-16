@@ -20,6 +20,26 @@
     "updated_at": "2026-06-16 19:14:09"
   },
   {
+    "id": 8,
+    "name": "Accounting - Hetzner Online GmbH Subscription",
+    "vendor": "Accounting - Hetzner Online GmbH",
+    "category": "Finance/Insurance",
+    "description": "Recurring subscription",
+    "price": 0.53,
+    "currency": "USD",
+    "cycle": "monthly",
+    "monthly_equiv": 0.53,
+    "status": "active",
+    "started_at": "2026-06-02",
+    "trial_ends_at": "",
+    "next_charge_at": "",
+    "source_email_id": "19e860dd8fa650c8",
+    "url": "https://hetzner.com",
+    "notes": "Imported automatically from Gmail invoice: \"Hetzner Online GmbH - Invoice 085000985712 (K0521211426)\"",
+    "created_at": "2026-06-16T19:44:35.116557Z",
+    "updated_at": "2026-06-16T19:44:35.116557Z"
+  },
+  {
     "id": 3,
     "name": "iCloud+ 50GB",
     "vendor": "iCloud",
@@ -78,5 +98,25 @@
     "notes": null,
     "created_at": "2026-06-16 14:26:21",
     "updated_at": "2026-06-16 14:26:21"
+  },
+  {
+    "id": 6,
+    "name": "PayPal Subscription",
+    "vendor": "PayPal",
+    "category": "Other",
+    "description": "Recurring subscription",
+    "price": 12.99,
+    "currency": "USD",
+    "cycle": "monthly",
+    "monthly_equiv": 12.99,
+    "status": "active",
+    "started_at": "2026-01-03",
+    "trial_ends_at": "",
+    "next_charge_at": "",
+    "source_email_id": "19eb578a554c4bcc",
+    "url": "https://paypal.co.il",
+    "notes": "Imported automatically from Gmail invoice: \"Receipt for Your Payment to Meta Platforms Techn...\"",
+    "created_at": "2026-06-16T19:44:34.222212Z",
+    "updated_at": "2026-06-16T19:44:44.117616Z"
   }
 ]
