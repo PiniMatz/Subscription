@@ -5,6 +5,7 @@ Upserts subscriptions into subs.sqlite by vendor (dedup).
 """
 import argparse
 import json
+import os
 import sqlite3
 import sys
 from datetime import datetime
@@ -54,7 +55,32 @@ def upsert_sub(db_path: str, vendor: str, name: str, category: str, price: float
     ''', (name, vendor, category, description, price, currency, cycle, equiv, status,
           started_at, trial_ends_at, next_charge_at, source_email_id, url, notes, now, now))
     conn.commit()
+    export_to_json(db_path)
     conn.close()
+
+def export_to_json(db_path: str) -> None:
+    """Export all subscriptions from the DB to subscriptions.json in webapp."""
+    conn = sqlite3.connect(db_path)
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+    c.execute("SELECT * FROM subscriptions ORDER BY started_at DESC")
+    rows = c.fetchall()
+    conn.close()
+
+    subs = []
+    for r in rows:
+        d = dict(r)
+        d['price'] = float(d['price'])
+        d['monthly_equiv'] = float(d['monthly_equiv'])
+        subs.append(d)
+
+    webapp_dir = os.path.abspath(os.path.join(os.path.dirname(db_path), '..', 'webapp'))
+    os.makedirs(webapp_dir, exist_ok=True)
+    json_path = os.path.join(webapp_dir, 'subscriptions.json')
+    
+    with open(json_path, 'w', encoding='utf-8') as f:
+        json.dump(subs, f, indent=2)
+    print(f"Exported {len(subs)} subscriptions to {json_path}")
 
 def update_email_state(db_path: str, last_scanned_ts: str = '', seen_ids: list = None) -> None:
     """Update email_state checkpoint. Merges new seen_ids with existing ones."""

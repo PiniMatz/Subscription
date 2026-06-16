@@ -3,12 +3,15 @@
 
   // Get authentication token from injected global or session storage
   let token = window.AUTH_TOKEN || sessionStorage.getItem('auth-token');
+  const isStaticMode = window.location.hostname.includes('github.io') || !token;
 
-  if (!token) {
+  if (!token && !isStaticMode) {
     alert('Authentication error: No session token provided.');
     return;
   }
-  sessionStorage.setItem('auth-token', token);
+  if (token) {
+    sessionStorage.setItem('auth-token', token);
+  }
 
   const baseUrl = window.location.origin;
 
@@ -82,12 +85,77 @@
   // --- DATA LOADING & CALCULATIONS ---
   async function loadDashboardData() {
     try {
-      allSubscriptions = await apiCall('GET', '/api/subscriptions');
-      renderSubscriptionsList();
-      renderRenewalsTimeline();
-      await loadSummaries();
+      if (isStaticMode) {
+        const res = await fetch('./subscriptions.json');
+        allSubscriptions = await res.json();
+        renderSubscriptionsList();
+        renderRenewalsTimeline();
+        calculateAndRenderStaticSummaries();
+        setupStaticUI();
+      } else {
+        allSubscriptions = await apiCall('GET', '/api/subscriptions');
+        renderSubscriptionsList();
+        renderRenewalsTimeline();
+        await loadSummaries();
+      }
     } catch (err) {
       console.error("Failed to load dashboard data:", err);
+      if (isStaticMode) {
+        showToast("Failed to load subscriptions.json.", "error");
+      }
+    }
+  }
+
+  function calculateAndRenderStaticSummaries() {
+    const summaryDiv = document.getElementById('summary');
+    summaryDiv.innerHTML = '';
+    
+    const byCurrency = {};
+    allSubscriptions.forEach(s => {
+      byCurrency[s.currency] = byCurrency[s.currency] || { monthly: 0, count: 0 };
+      byCurrency[s.currency].monthly += (s.monthly_equiv || 0);
+      byCurrency[s.currency].count += 1;
+    });
+
+    if (Object.keys(byCurrency).length === 0) {
+      summaryDiv.innerHTML = '<div class="empty-state" style="padding: 10px;"><p style="font-size:12px;">No active subscriptions</p></div>';
+      return;
+    }
+
+    for (const [curr, stats] of Object.entries(byCurrency)) {
+      const card = document.createElement('div');
+      card.className = 'summary-card';
+      card.innerHTML = `
+        <div class="summary-currency">${curr} Total</div>
+        <div class="summary-amount">${formatCurrencyValue(stats.monthly, curr)}</div>
+        <div class="summary-count">${stats.count} subscription${stats.count !== 1 ? 's' : ''}</div>
+      `;
+      summaryDiv.appendChild(card);
+    }
+    
+    renderCategoryBudgets();
+  }
+
+  function setupStaticUI() {
+    const addBtn = document.getElementById('addBtn');
+    if (addBtn) addBtn.style.display = 'none';
+
+    const scanBtn = document.getElementById('scanBtn');
+    if (scanBtn) {
+      scanBtn.disabled = true;
+      scanBtn.style.opacity = '0.5';
+      scanBtn.style.cursor = 'not-allowed';
+      scanBtn.querySelector('span').textContent = 'Scan Disabled (Static)';
+    }
+
+    const statusCard = document.querySelector('.scanner-status-card');
+    if (statusCard) {
+      const indicator = statusCard.querySelector('.status-indicator');
+      indicator.innerHTML = `
+        <span class="pulse-dot" style="background:#6366f1; box-shadow:0 0 10px #6366f1; animation:none;"></span>
+        <span class="status-text">GitHub Pages (Read-Only)</span>
+      `;
+      statusCard.querySelector('.status-subtext').textContent = 'To edit data, run the application server locally.';
     }
   }
 
@@ -262,6 +330,11 @@
         const badgeClass = sub.status === 'trial' ? 'badge-status-trial' : 'badge-status-active';
         const badgeLabel = sub.status === 'trial' ? 'Trial' : 'Active';
 
+        const actionButtons = isStaticMode
+          ? ''
+          : `<button class="btn-icon edit-sub-btn" data-id="${sub.id}" title="Edit subscription"><i class="fa-solid fa-pen-to-square"></i></button>
+             <button class="btn-icon btn-icon-danger delete-sub-btn" data-id="${sub.id}" data-name="${escapeHtml(sub.name)}" title="Delete subscription"><i class="fa-solid fa-trash-can"></i></button>`;
+
         card.innerHTML = `
           <div class="sub-card-header">
             <div class="sub-info">
@@ -284,8 +357,7 @@
             </div>
             <div class="sub-actions">
               ${sub.url ? `<a href="${escapeHtml(sub.url)}" target="_blank" class="btn-icon btn-icon-primary" title="Visit website"><i class="fa-solid fa-globe"></i></a>` : ''}
-              <button class="btn-icon edit-sub-btn" data-id="${sub.id}" title="Edit subscription"><i class="fa-solid fa-pen-to-square"></i></button>
-              <button class="btn-icon btn-icon-danger delete-sub-btn" data-id="${sub.id}" data-name="${escapeHtml(sub.name)}" title="Delete subscription"><i class="fa-solid fa-trash-can"></i></button>
+              ${actionButtons}
             </div>
           </div>
         `;

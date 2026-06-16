@@ -25,3 +25,10 @@ Thumbs.db
 ehthumbs.db
 Desktop.ini
 .DS_Store
+
+# Credentials & OAuth Tokens (Never commit these!)
+credentials.json
+token.json
+credentials/
+.env*
+
