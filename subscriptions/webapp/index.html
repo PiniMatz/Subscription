@@ -3,34 +3,358 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Subscriptions Tracker</title>
-  <link rel="stylesheet" href="/style.css" />
+  <title>SubNova — Premium Subscription Tracker</title>
+  <!-- Modern Google Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="container">
-    <header>
-      <div>
-        <h1>Subscriptions</h1>
-        <p style="font-size: 12px; color: #999; margin: 0;">Auto-scanning Gmail every 48 hours</p>
+  <div class="dashboard-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-logo">
+          <i class="fa-solid fa-satellite-dish"></i>
+        </div>
+        <div class="brand-text">
+          <h2>SubNova</h2>
+          <span>Smart Tracker</span>
+        </div>
       </div>
-      <button id="scanBtn" class="scan-btn">Scan Inbox</button>
-    </header>
 
-    <div class="tabs">
-      <button class="tab-btn active" data-tab="list">List</button>
-      <button class="tab-btn" data-tab="breakdown">By Category</button>
-    </div>
+      <div class="scanner-status-card">
+        <div class="status-indicator">
+          <span class="pulse-dot active"></span>
+          <span class="status-text">Gmail Scanner Connected</span>
+        </div>
+        <p class="status-subtext">Auto-scanning Gmail every 48 hours</p>
+        <button id="scanBtn" class="btn btn-secondary btn-full">
+          <i class="fa-solid fa-rotate"></i>
+          <span>Scan Inbox</span>
+        </button>
+      </div>
 
-    <div id="list" class="tab-content active">
-      <div id="subsList" class="subscriptions-list"></div>
-    </div>
+      <!-- Financial Overview Section in Sidebar -->
+      <div class="sidebar-section">
+        <h4 class="section-title">Monthly Spending</h4>
+        <div id="summary" class="summary-container">
+          <div class="loading-spinner"><i class="fa-solid fa-circle-notch fa-spin"></i> Loading stats...</div>
+        </div>
+      </div>
 
-    <div id="breakdown" class="tab-content">
-      <div id="summary" class="summary-box"></div>
-      <div id="categories" class="categories-list"></div>
+      <!-- Budget Allocation Section in Sidebar -->
+      <div class="sidebar-section">
+        <h4 class="section-title">Category Budgets</h4>
+        <div id="categoryBudgets" class="budget-progress-list">
+          <div class="loading-spinner"><i class="fa-solid fa-circle-notch fa-spin"></i> Loading budgets...</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <header class="main-header">
+        <div class="header-welcome">
+          <h1>Subscription Dashboard</h1>
+          <p>Analyze, track, and optimize your recurring expenses.</p>
+        </div>
+        <div class="header-actions">
+          <button id="addBtn" class="btn btn-primary">
+            <i class="fa-solid fa-plus"></i>
+            <span>Add Subscription</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Advanced Filter Controls -->
+      <section class="filters-card">
+        <div class="search-box">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" id="searchInput" placeholder="Search by name, vendor, or description..." />
+        </div>
+        <div class="filter-dropdowns">
+          <div class="select-wrapper">
+            <i class="fa-solid fa-tags"></i>
+            <select id="categoryFilter">
+              <option value="">All Categories</option>
+              <option value="Streaming">Streaming</option>
+              <option value="Software/SaaS">Software/SaaS</option>
+              <option value="Cloud/Storage">Cloud/Storage</option>
+              <option value="News/Media">News/Media</option>
+              <option value="Music">Music</option>
+              <option value="Gaming">Gaming</option>
+              <option value="Fitness/Health">Fitness/Health</option>
+              <option value="Utilities">Utilities</option>
+              <option value="Finance/Insurance">Finance/Insurance</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="select-wrapper">
+            <i class="fa-solid fa-clock"></i>
+            <select id="cycleFilter">
+              <option value="">All Cycles</option>
+              <option value="weekly">Weekly</option>
+              <option value="monthly">Monthly</option>
+              <option value="quarterly">Quarterly</option>
+              <option value="yearly">Yearly</option>
+              <option value="oneoff">One-Off</option>
+            </select>
+          </div>
+          <div class="select-wrapper">
+            <i class="fa-solid fa-circle-info"></i>
+            <select id="statusFilter">
+              <option value="">All Statuses</option>
+              <option value="active">Active</option>
+              <option value="trial">Trial</option>
+            </select>
+          </div>
+          <button id="clearFiltersBtn" class="btn-clear" title="Clear Filters">
+            <i class="fa-solid fa-filter-circle-xmark"></i>
+          </button>
+        </div>
+      </section>
+
+      <!-- Tab Navigation -->
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="list">
+          <i class="fa-solid fa-list-ul"></i>
+          <span>Subscriptions List</span>
+        </button>
+        <button class="tab-btn" data-tab="timeline">
+          <i class="fa-solid fa-calendar-days"></i>
+          <span>Upcoming Renewals</span>
+        </button>
+      </div>
+
+      <!-- Tab Contents -->
+      <div id="list" class="tab-content active">
+        <div id="subsList" class="subscriptions-list-container">
+          <div class="loading-spinner"><i class="fa-solid fa-circle-notch fa-spin"></i> Fetching subscriptions...</div>
+        </div>
+      </div>
+
+      <div id="timeline" class="tab-content">
+        <div id="timelineList" class="timeline-container">
+          <!-- Upcoming charges timeline rendered here -->
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Add Subscription Modal -->
+  <div id="addModal" class="modal">
+    <div class="modal-content glass">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-plus-circle"></i> Add Subscription</h3>
+        <button class="close-btn" data-close="addModal">&times;</button>
+      </div>
+      <form id="addForm">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="addName">Subscription Name *</label>
+            <input type="text" id="addName" placeholder="e.g. Netflix Premium" required />
+          </div>
+          <div class="form-group">
+            <label for="addVendor">Vendor/Service *</label>
+            <input type="text" id="addVendor" placeholder="e.g. Netflix" required />
+          </div>
+          <div class="form-group">
+            <label for="addCategory">Category *</label>
+            <select id="addCategory" required>
+              <option value="Streaming">Streaming</option>
+              <option value="Software/SaaS">Software/SaaS</option>
+              <option value="Cloud/Storage">Cloud/Storage</option>
+              <option value="News/Media">News/Media</option>
+              <option value="Music">Music</option>
+              <option value="Gaming">Gaming</option>
+              <option value="Fitness/Health">Fitness/Health</option>
+              <option value="Utilities">Utilities</option>
+              <option value="Finance/Insurance">Finance/Insurance</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="addCycle">Billing Cycle *</label>
+            <select id="addCycle" required>
+              <option value="weekly">Weekly</option>
+              <option value="monthly" selected>Monthly</option>
+              <option value="quarterly">Quarterly</option>
+              <option value="yearly">Yearly</option>
+              <option value="oneoff">One-Off</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="addPrice">Price *</label>
+            <div class="price-input-wrapper">
+              <input type="number" id="addPrice" step="0.01" min="0" placeholder="0.00" required />
+              <select id="addCurrency">
+                <option value="USD">USD ($)</option>
+                <option value="ILS">ILS (₪)</option>
+                <option value="EUR">EUR (€)</option>
+                <option value="GBP">GBP (£)</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="addStatus">Status</label>
+            <select id="addStatus">
+              <option value="active">Active</option>
+              <option value="trial">Free Trial</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="addStartedAt">Start Date</label>
+            <input type="date" id="addStartedAt" />
+          </div>
+          <div class="form-group" id="trialEndsGroup" style="display:none;">
+            <label for="addTrialEndsAt">Trial End Date</label>
+            <input type="date" id="addTrialEndsAt" />
+          </div>
+          <div class="form-group">
+            <label for="addNextCharge">Next Charge Date</label>
+            <input type="date" id="addNextCharge" />
+          </div>
+          <div class="form-group">
+            <label for="addUrl">Website URL</label>
+            <input type="url" id="addUrl" placeholder="https://..." />
+          </div>
+        </div>
+        <div class="form-group form-group-full">
+          <label for="addDescription">Description</label>
+          <input type="text" id="addDescription" placeholder="What is this subscription for?" />
+        </div>
+        <div class="form-group form-group-full">
+          <label for="addNotes">Notes</label>
+          <textarea id="addNotes" rows="2" placeholder="Any additional comments (cancellation policy, etc.)..."></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-close="addModal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Subscription</button>
+        </div>
+      </form>
     </div>
   </div>
 
-  <script src="/app.js"></script>
+  <!-- Edit Subscription Modal -->
+  <div id="editModal" class="modal">
+    <div class="modal-content glass">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-edit"></i> Edit Subscription</h3>
+        <button class="close-btn" data-close="editModal">&times;</button>
+      </div>
+      <form id="editForm">
+        <input type="hidden" id="editId" />
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="editName">Subscription Name *</label>
+            <input type="text" id="editName" required />
+          </div>
+          <div class="form-group">
+            <label for="editVendor">Vendor/Service *</label>
+            <input type="text" id="editVendor" required />
+          </div>
+          <div class="form-group">
+            <label for="editCategory">Category *</label>
+            <select id="editCategory" required>
+              <option value="Streaming">Streaming</option>
+              <option value="Software/SaaS">Software/SaaS</option>
+              <option value="Cloud/Storage">Cloud/Storage</option>
+              <option value="News/Media">News/Media</option>
+              <option value="Music">Music</option>
+              <option value="Gaming">Gaming</option>
+              <option value="Fitness/Health">Fitness/Health</option>
+              <option value="Utilities">Utilities</option>
+              <option value="Finance/Insurance">Finance/Insurance</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="editCycle">Billing Cycle *</label>
+            <select id="editCycle" required>
+              <option value="weekly">Weekly</option>
+              <option value="monthly">Monthly</option>
+              <option value="quarterly">Quarterly</option>
+              <option value="yearly">Yearly</option>
+              <option value="oneoff">One-Off</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="editPrice">Price *</label>
+            <div class="price-input-wrapper">
+              <input type="number" id="editPrice" step="0.01" min="0" required />
+              <select id="editCurrency">
+                <option value="USD">USD ($)</option>
+                <option value="ILS">ILS (₪)</option>
+                <option value="EUR">EUR (€)</option>
+                <option value="GBP">GBP (£)</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="editStatus">Status</label>
+            <select id="editStatus">
+              <option value="active">Active</option>
+              <option value="trial">Free Trial</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="editStartedAt">Start Date</label>
+            <input type="date" id="editStartedAt" />
+          </div>
+          <div class="form-group" id="editTrialEndsGroup">
+            <label for="editTrialEndsAt">Trial End Date</label>
+            <input type="date" id="editTrialEndsAt" />
+          </div>
+          <div class="form-group">
+            <label for="editNextCharge">Next Charge Date</label>
+            <input type="date" id="editNextCharge" />
+          </div>
+          <div class="form-group">
+            <label for="editUrl">Website URL</label>
+            <input type="url" id="editUrl" />
+          </div>
+        </div>
+        <div class="form-group form-group-full">
+          <label for="editDescription">Description</label>
+          <input type="text" id="editDescription" />
+        </div>
+        <div class="form-group form-group-full">
+          <label for="editNotes">Notes</label>
+          <textarea id="editNotes" rows="2"></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-close="editModal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div id="deleteModal" class="modal">
+    <div class="modal-content glass modal-sm">
+      <div class="modal-header">
+        <h3>Confirm Deletion</h3>
+        <button class="close-btn" data-close="deleteModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete <strong id="deleteSubName"></strong>?</p>
+        <p class="text-danger"><i class="fa-solid fa-triangle-exclamation"></i> This action cannot be undone.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-close="deleteModal">Cancel</button>
+        <button type="button" id="confirmDeleteBtn" class="btn btn-danger">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <script src="app.js"></script>
 </body>
 </html>
