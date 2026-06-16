@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Subscriptions Tracker</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <h1>Subscriptions</h1>
+        <p style="font-size: 12px; color: #999; margin: 0;">Auto-scanning Gmail every 48 hours</p>
+      </div>
+      <button id="scanBtn" class="scan-btn">Scan Inbox</button>
+    </header>
+
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="list">List</button>
+      <button class="tab-btn" data-tab="breakdown">By Category</button>
+    </div>
+
+    <div id="list" class="tab-content active">
+      <div id="subsList" class="subscriptions-list"></div>
+    </div>
+
+    <div id="breakdown" class="tab-content">
+      <div id="summary" class="summary-box"></div>
+      <div id="categories" class="categories-list"></div>
+    </div>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
