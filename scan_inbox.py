@@ -34,18 +34,20 @@ def search_subscription_emails(service, last_scanned_ts=None):
     # Search receipt emails
     query = 'subject:(receipt OR invoice OR renewal OR trial OR confirmation OR charged OR "auto-renew" OR subscribe)'
     
-    # Filter since last scan if available
-    if last_scanned_ts:
-        try:
-            # Parse ISO date and format to YYYY/MM/DD for Gmail search
-            dt = datetime.fromisoformat(last_scanned_ts.replace('Z', '+00:00'))
-            date_query = dt.strftime(' after:%Y/%m/%d')
-            query += date_query
-        except Exception:
-            pass
+    # If no last scan timestamp, default to January 1st, 2026
+    if not last_scanned_ts:
+        last_scanned_ts = "2026-01-01T00:00:00Z"
+        
+    try:
+        # Parse ISO date and format to YYYY/MM/DD for Gmail search
+        dt = datetime.fromisoformat(last_scanned_ts.replace('Z', '+00:00'))
+        date_query = dt.strftime(' after:%Y/%m/%d')
+        query += date_query
+    except Exception:
+        pass
 
     print(f"Gmail Query: {query}")
-    results = service.users().messages().list(userId='me', q=query, maxResults=50).execute()
+    results = service.users().messages().list(userId='me', q=query, maxResults=250).execute()
     return results.get('messages', [])
 
 def extract_display_name(sender):
@@ -265,6 +267,11 @@ def main():
         print("Error: token.json missing! Run gmail_auth.py first.")
         return
         
+    import argparse
+    parser = argparse.ArgumentParser(description="Scan Gmail for subscriptions.")
+    parser.add_argument("--reset", action="store_true", help="Reset scan checkpoint and rescan since January 2026.")
+    args = parser.parse_args()
+        
     # Read state checkpoint from SQLite
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
@@ -281,6 +288,14 @@ def main():
         # Seed state row
         c.execute("INSERT INTO email_state (id, last_scanned_ts, seen_ids) VALUES (1, NULL, '[]')")
         conn.commit()
+        
+    if args.reset:
+        c.execute("UPDATE email_state SET last_scanned_ts = NULL, seen_ids = '[]' WHERE id = 1")
+        conn.commit()
+        print("Scan checkpoint has been reset! Rescanning from January 2026...")
+        last_scanned_ts = None
+        seen_ids = []
+        
     conn.close()
 
     creds = Credentials.from_authorized_user_file('token.json', SCOPES)
