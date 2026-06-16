@@ -31,8 +31,10 @@ VENDOR_RULES = [
 ]
 
 def search_subscription_emails(service, last_scanned_ts=None):
-    # Search receipt emails
-    query = 'subject:(receipt OR invoice OR renewal OR trial OR confirmation OR charged OR "auto-renew" OR subscribe)'
+    # Expanded query: searches both subject and body content (no subject: prefix), including Hebrew terms
+    query = ('(receipt OR invoice OR renewal OR trial OR confirmation OR charged OR "auto-renew" OR subscribe OR '
+             'payment OR billed OR recurring OR "next billing" OR "subscription plan" OR '
+             'חשבונית OR קבלה OR חיוב OR מנוי OR תשלום OR חידוש OR "הוראת קבע" OR "אישור תשלום")')
     
     # If no last scan timestamp, default to January 1st, 2026
     if not last_scanned_ts:
@@ -85,15 +87,15 @@ def guess_category(vendor, subject, body):
     text = (vendor + " " + subject + " " + body).lower()
     
     categories = {
-        "Streaming": ["netflix", "disney", "hbo", "paramount", "hulu", "peacock", "stream", "player", "tv", "crunchyroll", "max", "showtime", "funimation"],
-        "Music": ["spotify", "deezer", "tidal", "music", "soundcloud", "pandora", "apple music", "shazam", "sirius"],
-        "Software/SaaS": ["openai", "chatgpt", "adobe", "github", "copilot", "microsoft", "office", "saas", "slack", "zoom", "figma", "vercel", "render", "domain", "hosting", "email", "mailchimp", "cloud", "aws", "digitalocean", "heroku", "mongodb", "supabase", "cloudflare", "notion", "canva", "grammarly", "jetbrains", "intellij", "sublime", "postman", "jira", "confluence", "trello", "asana", "monday", "hubspot", "salesforce", "datadog", "sentry", "new relic", "shopify"],
-        "Cloud/Storage": ["icloud", "google one", "dropbox", "drive", "storage", "backup", "box", "onedrive", "sync", "backblaze"],
-        "News/Media": ["nytimes", "wsj", "economist", "paper", "news", "magazine", "medium", "substack", "guardian", "ft", "financial times", "bloomberg", "wired", "new yorker", "atlantic"],
-        "Gaming": ["xbox", "playstation", "nintendo", "steam", "epic", "game", "arcade", "play", "gaming", "discord", "nitro", "twitch", "patreon", "blizzard", "ea play", "roblox", "minecraft"],
-        "Fitness/Health": ["gym", "fit", "fitness", "health", "headspace", "calm", "yoga", "strava", "myfitnesspal", "club", "sports", "peloton", "nike"],
-        "Utilities": ["electric", "gas", "water", "internet", "phone", "mobile", "cell", "isp", "fiber", "hosting", "dns", "registrar", "network", "telecom"],
-        "Finance/Insurance": ["bank", "insurance", "advisor", "invest", "cards", "credit", "tax", "accounting", "quickbooks", "xero", "turbotax", "robinhood", "wealthfront", "etrade"]
+        "Streaming": ["netflix", "disney", "hbo", "paramount", "hulu", "peacock", "stream", "player", "tv", "crunchyroll", "max", "showtime", "funimation", "סרטים", "טלוויזיה", "יס", "הוט", "סלקום", "פרטנר"],
+        "Music": ["spotify", "deezer", "tidal", "music", "soundcloud", "pandora", "apple music", "shazam", "sirius", "מוזיקה"],
+        "Software/SaaS": ["openai", "chatgpt", "adobe", "github", "copilot", "microsoft", "office", "saas", "slack", "zoom", "figma", "vercel", "render", "domain", "hosting", "email", "mailchimp", "cloud", "aws", "digitalocean", "heroku", "mongodb", "supabase", "cloudflare", "notion", "canva", "grammarly", "jetbrains", "intellij", "sublime", "postman", "jira", "confluence", "trello", "asana", "monday", "hubspot", "salesforce", "datadog", "sentry", "new relic", "shopify", "תוכנה", "אחסון"],
+        "Cloud/Storage": ["icloud", "google one", "dropbox", "drive", "storage", "backup", "box", "onedrive", "sync", "backblaze", "ענן"],
+        "News/Media": ["nytimes", "wsj", "economist", "paper", "news", "magazine", "medium", "substack", "guardian", "ft", "financial times", "bloomberg", "wired", "new yorker", "atlantic", "עיתון", "חדשות", "מגזין"],
+        "Gaming": ["xbox", "playstation", "nintendo", "steam", "epic", "game", "arcade", "play", "gaming", "discord", "nitro", "twitch", "patreon", "blizzard", "ea play", "roblox", "minecraft", "משחקים"],
+        "Fitness/Health": ["gym", "fit", "fitness", "health", "headspace", "calm", "yoga", "strava", "myfitnesspal", "club", "sports", "peloton", "nike", "ספורט", "חדר כושר", "בריאות"],
+        "Utilities": ["electric", "gas", "water", "internet", "phone", "mobile", "cell", "isp", "fiber", "hosting", "dns", "registrar", "network", "telecom", "חשמל", "מים", "אינטרנט", "טלפון", "סלולר", "בזק"],
+        "Finance/Insurance": ["bank", "insurance", "advisor", "invest", "cards", "credit", "tax", "accounting", "quickbooks", "xero", "turbotax", "robinhood", "wealthfront", "etrade", "ביטוח", "בנק", "אשראי", "פנסיה"]
     }
     
     for cat, keywords in categories.items():
@@ -174,18 +176,18 @@ def parse_email_data(service, msg_id):
         category = "Cloud/Storage"
 
     # 2. Extract Price & Currency
-    # Look for $9.99, ₪49.90, €9.99, £12.00, etc.
+    # Look for $9.99, ₪49.90, €9.99, £12.00, ש"ח 50, שקל 100, etc.
     price = 0.0
     currency = "USD"
     
-    # Regex to find currency symbols and values
-    price_matches = re.findall(r'(ILS|\$|₪|€|£|USD|EUR|GBP)\s*([0-9]+(?:\.[0-9]{2})?)', body + " " + subject)
-    # Reverse pattern (e.g. 49.90 ₪)
-    price_matches_rev = re.findall(r'([0-9]+(?:\.[0-9]{2})?)\s*(ILS|\$|₪|€|£|USD|EUR|GBP)', body + " " + subject)
+    # Regex to find currency symbols and values (supporting ש"ח and שקל)
+    price_matches = re.findall(r'(ILS|\$|₪|ש"ח|שקל|€|£|USD|EUR|GBP)\s*([0-9]+(?:\.[0-9]{2})?)', body + " " + subject)
+    # Reverse pattern (e.g. 49.90 ₪ or 49.90 ש"ח)
+    price_matches_rev = re.findall(r'([0-9]+(?:\.[0-9]{2})?)\s*(ILS|\$|₪|ש"ח|שקל|€|£|USD|EUR|GBP)', body + " " + subject)
     
     currency_symbols = {
         '$': 'USD', 'USD': 'USD',
-        '₪': 'ILS', 'ILS': 'ILS',
+        '₪': 'ILS', 'ILS': 'ILS', 'ש"ח': 'ILS', 'שקל': 'ILS',
         '€': 'EUR', 'EUR': 'EUR',
         '£': 'GBP', 'GBP': 'GBP'
     }
