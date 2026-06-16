@@ -48,6 +48,57 @@ def search_subscription_emails(service, last_scanned_ts=None):
     results = service.users().messages().list(userId='me', q=query, maxResults=50).execute()
     return results.get('messages', [])
 
+def extract_display_name(sender):
+    # Match display name from "Display Name" <email@addr.com>
+    match = re.match(r'^["\']?([^"\'<]+)["\']?\s*<', sender)
+    if match:
+        name = match.group(1).strip()
+        clean_name = name.lower()
+        if clean_name in ["no-reply", "noreply", "billing", "support", "invoice", "receipt", "info", "hello", "team", "notifications"]:
+            return None
+        # Remove common service prefixes
+        for word in ["billing", "support", "no-reply", "noreply", "notifications", "info", "receipt", "invoice", "team"]:
+            if clean_name.startswith(word):
+                name = re.sub(r'^(?i)' + word + r'\s+[-:]*\s*', '', name).strip()
+        return name if len(name) > 1 else None
+    return None
+
+def clean_domain_name(domain):
+    parts = domain.split('.')
+    if len(parts) >= 2:
+        # Strip common billing/subdomain words
+        sub_removals = ["billing", "mail", "mg", "customer", "info", "email", "noreply", "support", "no-reply", "notification", "notifications", "member", "members", "invoice", "receipt", "accounts"]
+        clean_parts = [p for p in parts[:-1] if p.lower() not in sub_removals]
+        if clean_parts:
+            return clean_parts[-1]
+    return parts[0]
+
+def format_vendor_name(name):
+    # Replace dashes and underscores with spaces, capitalize each word
+    name = name.replace('-', ' ').replace('_', ' ')
+    name = re.sub(r'\s+', ' ', name).strip()
+    return ' '.join(w.capitalize() for w in name.split())
+
+def guess_category(vendor, subject, body):
+    text = (vendor + " " + subject + " " + body).lower()
+    
+    categories = {
+        "Streaming": ["netflix", "disney", "hbo", "paramount", "hulu", "peacock", "stream", "player", "tv", "crunchyroll", "max", "showtime", "funimation"],
+        "Music": ["spotify", "deezer", "tidal", "music", "soundcloud", "pandora", "apple music", "shazam", "sirius"],
+        "Software/SaaS": ["openai", "chatgpt", "adobe", "github", "copilot", "microsoft", "office", "saas", "slack", "zoom", "figma", "vercel", "render", "domain", "hosting", "email", "mailchimp", "cloud", "aws", "digitalocean", "heroku", "mongodb", "supabase", "cloudflare", "notion", "canva", "grammarly", "jetbrains", "intellij", "sublime", "postman", "jira", "confluence", "trello", "asana", "monday", "hubspot", "salesforce", "datadog", "sentry", "new relic", "shopify"],
+        "Cloud/Storage": ["icloud", "google one", "dropbox", "drive", "storage", "backup", "box", "onedrive", "sync", "backblaze"],
+        "News/Media": ["nytimes", "wsj", "economist", "paper", "news", "magazine", "medium", "substack", "guardian", "ft", "financial times", "bloomberg", "wired", "new yorker", "atlantic"],
+        "Gaming": ["xbox", "playstation", "nintendo", "steam", "epic", "game", "arcade", "play", "gaming", "discord", "nitro", "twitch", "patreon", "blizzard", "ea play", "roblox", "minecraft"],
+        "Fitness/Health": ["gym", "fit", "fitness", "health", "headspace", "calm", "yoga", "strava", "myfitnesspal", "club", "sports", "peloton", "nike"],
+        "Utilities": ["electric", "gas", "water", "internet", "phone", "mobile", "cell", "isp", "fiber", "hosting", "dns", "registrar", "network", "telecom"],
+        "Finance/Insurance": ["bank", "insurance", "advisor", "invest", "cards", "credit", "tax", "accounting", "quickbooks", "xero", "turbotax", "robinhood", "wealthfront", "etrade"]
+    }
+    
+    for cat, keywords in categories.items():
+        if any(kw in text for kw in keywords):
+            return cat
+    return "Other"
+
 def parse_email_data(service, msg_id):
     msg = service.users().messages().get(userId='me', id=msg_id, format='full').execute()
     payload = msg.get('payload', {})
@@ -80,27 +131,43 @@ def parse_email_data(service, msg_id):
         sender_email = match_email.group(0)
     domain = sender_email.split('@')[-1].lower()
     
-    # 1. Identify Vendor & Category
-    vendor = domain.split('.')[0].capitalize()
-    name = f"{vendor} Subscription"
-    category = "Other"
+    # 1. Identify Vendor (Display name -> Cleaned Domain Name -> fallback)
+    vendor = extract_display_name(sender)
+    if not vendor:
+        cleaned_domain = clean_domain_name(domain)
+        vendor = format_vendor_name(cleaned_domain)
+    
+    category = None
     description = "Recurring subscription"
     
     for rule in VENDOR_RULES:
         if rule['domain'] in domain:
             vendor = rule['vendor']
-            name = rule['name']
             category = rule['category']
             description = rule['desc']
             break
             
+    # Guess category if not matched by rules
+    if not category:
+        category = guess_category(vendor, subject, body)
+        
+    # Auto-detect plan name for subscription naming
+    plan = "Subscription"
+    subject_lower = subject.lower()
+    for kw in ["pro", "premium", "standard", "basic", "plus", "business", "personal", "family", "student", "unlimited", "membership", "tier", "enterprise", "solo", "team"]:
+        if kw in subject_lower:
+            plan = kw.capitalize()
+            break
+            
+    name = f"{vendor} {plan}"
+    
     # Adjust names/categories for Google/Apple if subject lists details
     if vendor == "Google" and "youtube" in subject.lower():
         vendor = "YouTube"
         name = "YouTube Premium"
         category = "Streaming"
         description = "Ad-free video streaming"
-    elif vendor == "Apple" and "icloud" in subject.lower():
+    elif vendor.lower() == "apple" and "icloud" in subject.lower():
         name = "iCloud Storage"
         category = "Cloud/Storage"
 
