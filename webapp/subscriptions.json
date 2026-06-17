@@ -1,6 +1,6 @@
 [
   {
-    "id": 166,
+    "id": 256,
     "name": "Accounting - Hetzner Online GmbH Subscription",
     "vendor": "Accounting - Hetzner Online GmbH",
     "category": "Software/SaaS",
@@ -16,11 +16,11 @@
     "source_email_id": "19e860dd8fa650c8",
     "url": "https://hetzner.com",
     "notes": "Imported automatically from Gmail invoice: \"Hetzner Online GmbH - Invoice 085000985712 (K0521211426)\"",
-    "created_at": "2026-06-17T04:49:28.636575Z",
-    "updated_at": "2026-06-17T04:49:28.636575Z"
+    "created_at": "2026-06-17T04:57:27.114372Z",
+    "updated_at": "2026-06-17T04:57:27.114372Z"
   },
   {
-    "id": 170,
+    "id": 260,
     "name": "Anthropic, PBC Subscription",
     "vendor": "Anthropic, PBC",
     "category": "Streaming",
@@ -36,11 +36,11 @@
     "source_email_id": "19e743e4aed75a6b",
     "url": "https://mail.anthropic.com",
     "notes": "Imported automatically from Gmail invoice: \"Your receipt from Anthropic, PBC #2598-7551-9817\"",
-    "created_at": "2026-06-17T04:49:31.314293Z",
-    "updated_at": "2026-06-17T04:49:31.314293Z"
+    "created_at": "2026-06-17T04:57:29.717783Z",
+    "updated_at": "2026-06-17T04:57:29.717783Z"
   },
   {
-    "id": 167,
+    "id": 257,
     "name": "Google Subscription",
     "vendor": "Google",
     "category": "Cloud/Storage",
@@ -56,11 +56,11 @@
     "source_email_id": "19e8434e8439c6c4",
     "url": "https://google.com",
     "notes": "Imported automatically from Gmail invoice: \"Google Cloud Platform & APIs: Payment received\"",
-    "created_at": "2026-06-17T04:49:28.866810Z",
-    "updated_at": "2026-06-17T04:49:46.974396Z"
+    "created_at": "2026-06-17T04:57:27.343898Z",
+    "updated_at": "2026-06-17T04:57:45.137253Z"
   },
   {
-    "id": 168,
+    "id": 258,
     "name": "DigitalOcean Support Subscription",
     "vendor": "DigitalOcean Support",
     "category": "Software/SaaS",
@@ -76,11 +76,11 @@
     "source_email_id": "19e81989e25e5b5d",
     "url": "https://digitalocean.com",
     "notes": "Imported automatically from Gmail invoice: \"DigitalOcean - Received $1.69 payment\"",
-    "created_at": "2026-06-17T04:49:29.523292Z",
-    "updated_at": "2026-06-17T04:49:47.407452Z"
+    "created_at": "2026-06-17T04:57:27.966222Z",
+    "updated_at": "2026-06-17T04:57:45.561047Z"
   },
   {
-    "id": 175,
+    "id": 265,
     "name": "Zety Subscription",
     "vendor": "Zety",
     "category": "Streaming",
@@ -96,11 +96,11 @@
     "source_email_id": "19e59b3a3bbdc800",
     "url": "https://tx.zety.com",
     "notes": "Imported automatically from Gmail invoice: \"Thank you for your order!\"",
-    "created_at": "2026-06-17T04:49:34.779379Z",
-    "updated_at": "2026-06-17T04:49:49.251861Z"
+    "created_at": "2026-06-17T04:57:33.156374Z",
+    "updated_at": "2026-06-17T04:57:47.497597Z"
   },
   {
-    "id": 171,
+    "id": 261,
     "name": "Moremins Subscription",
     "vendor": "Moremins",
     "category": "Streaming",
@@ -116,11 +116,11 @@
     "source_email_id": "19e73dd0d5972b2f",
     "url": "https://paypal.co.il",
     "notes": "Imported automatically from Gmail invoice: \"Receipt for Your Payment to Moremins Ltd\"",
-    "created_at": "2026-06-17T04:49:31.746079Z",
-    "updated_at": "2026-06-17T04:49:50.939783Z"
+    "created_at": "2026-06-17T04:57:30.155657Z",
+    "updated_at": "2026-06-17T04:57:49.168864Z"
   },
   {
-    "id": 190,
+    "id": 279,
     "name": "Railway Subscription",
     "vendor": "Railway",
     "category": "Software/SaaS",
@@ -136,11 +136,31 @@
     "source_email_id": "19dc3b374fb86f20",
     "url": "https://railway.app",
     "notes": "Imported automatically from Gmail invoice: \"Your receipt from Railway Corporation #2228-3006\"",
-    "created_at": "2026-06-17T04:49:51.791694Z",
-    "updated_at": "2026-06-17T04:49:51.791694Z"
+    "created_at": "2026-06-17T04:57:50.008628Z",
+    "updated_at": "2026-06-17T04:57:50.008628Z"
   },
   {
-    "id": 174,
+    "id": 267,
+    "name": "DoNotReply@matnasim.org.il Subscription",
+    "vendor": "DoNotReply@matnasim.org.il",
+    "category": "Streaming",
+    "description": "Recurring subscription",
+    "price": 150.0,
+    "currency": "ILS",
+    "cycle": "monthly",
+    "monthly_equiv": 150.0,
+    "status": "active",
+    "started_at": "2026-04-16",
+    "trial_ends_at": "",
+    "next_charge_at": "",
+    "source_email_id": "19e3a4a8341d4873",
+    "url": "https://matnasim.org.il",
+    "notes": "Imported automatically from Gmail invoice: \"\u05de\u05e6\"\u05d1 \u05e7\u05d1\u05dc\u05d5\u05ea \u05de\u05de\u05ea\u05e0\"\u05e1 \u05de\u05e8\u05db\u05d6 \u05e7\u05d4\u05d9\u05dc\u05ea\u05d9 \u05e4\u05e8\u05d3\u05e1\u05d9\u05d4 - \u05e2\u05d1\u05d5\u05e8 \u05de\u05e6\u05e0\u05e8 \u05e4\u05d9\u05e0\u05d9\"",
+    "created_at": "2026-06-17T04:57:36.617861Z",
+    "updated_at": "2026-06-17T04:57:54.428703Z"
+  },
+  {
+    "id": 264,
     "name": "Gov Subscription",
     "vendor": "Gov",
     "category": "Streaming",
@@ -156,31 +176,11 @@
     "source_email_id": "19e5e4c748546259",
     "url": "https://ecom.gov.il",
     "notes": "Imported automatically from Gmail invoice: \"\u05e9\u05d9\u05e8\u05d5\u05ea \u05d4\u05ea\u05e9\u05dc\u05d5\u05de\u05d9\u05dd \u05d4\u05de\u05de\u05e9\u05dc\u05ea\u05d9 - \u05d0\u05d2\u05e8\u05ea \u05e8\u05d9\u05e9\u05d9\u05d5\u05df \u05e0\u05d4\u05d9\u05d2\u05d4 - \u05de\u05e9\u05e8\u05d3 \u05d4\u05ea\u05d7\u05d1\u05d5\u05e8\u05d4 - \u05de\u05e1\u05e4\u05e8 \u05d4\u05d4\u05d6\u05de\u05e0\u05d4 281916058\"",
-    "created_at": "2026-06-17T04:49:33.721071Z",
-    "updated_at": "2026-06-17T04:49:56.617751Z"
+    "created_at": "2026-06-17T04:57:32.075274Z",
+    "updated_at": "2026-06-17T04:57:55.053654Z"
   },
   {
-    "id": 164,
-    "name": "DoNotReply@matnasim.org.il Subscription",
-    "vendor": "DoNotReply@matnasim.org.il",
-    "category": "Streaming",
-    "description": "Recurring subscription",
-    "price": 260.0,
-    "currency": "ILS",
-    "cycle": "monthly",
-    "monthly_equiv": 260.0,
-    "status": "active",
-    "started_at": "2026-03-25",
-    "trial_ends_at": "",
-    "next_charge_at": "",
-    "source_email_id": "19eb56e30b5f0637",
-    "url": "https://matnasim.org.il",
-    "notes": "Imported automatically from Gmail invoice: \"\u05de\u05e8\u05db\u05d6 \u05e7\u05d4\u05d9\u05dc\u05ea\u05d9 \u05e4\u05e8\u05d3\u05e1\u05d9\u05d4 \u05d7\u05d5\u05d3\u05e9 \u05de\u05e8\u05e5\"",
-    "created_at": "2026-06-17T04:49:23.754020Z",
-    "updated_at": "2026-06-17T04:50:04.367652Z"
-  },
-  {
-    "id": 178,
+    "id": 268,
     "name": "Hahishook Contact Subscription",
     "vendor": "Hahishook Contact",
     "category": "Streaming",
@@ -196,31 +196,11 @@
     "source_email_id": "19e24c1d9674474d",
     "url": "https://hahishook.com",
     "notes": "Imported automatically from Gmail invoice: \"\u05d4\u05d6\u05de\u05e0\u05d4 528680WB \u05de\u05d0\u05ea\u05e8 \u05d4\u05d7\u05d9\u05e9\u05d5\u05e7 \u05d4\u05ea\u05e7\u05d1\u05dc\u05d4!\"",
-    "created_at": "2026-06-17T04:49:40.671177Z",
-    "updated_at": "2026-06-17T04:50:03.744609Z"
+    "created_at": "2026-06-17T04:57:38.893910Z",
+    "updated_at": "2026-06-17T04:58:02.104369Z"
   },
   {
-    "id": 207,
-    "name": "Malwarebytes Subscription",
-    "vendor": "Malwarebytes",
-    "category": "Software/SaaS",
-    "description": "Recurring subscription",
-    "price": 20.0,
-    "currency": "USD",
-    "cycle": "weekly",
-    "monthly_equiv": 86.66666666666666,
-    "status": "active",
-    "started_at": "2026-03-23",
-    "trial_ends_at": "",
-    "next_charge_at": "",
-    "source_email_id": "19d1c407e9ee2b82",
-    "url": "https://e.malwarebytes.com",
-    "notes": "Imported automatically from Gmail invoice: \"DarkSword is actively targeting unpatched iPhones\"",
-    "created_at": "2026-06-17T04:50:05.844659Z",
-    "updated_at": "2026-06-17T04:50:05.844659Z"
-  },
-  {
-    "id": 173,
+    "id": 263,
     "name": "MAST Subscription",
     "vendor": "MAST",
     "category": "Streaming",
@@ -236,11 +216,11 @@
     "source_email_id": "19e5e4f9f498cecb",
     "url": "https://send.vpcontact.com",
     "notes": "Imported automatically from Gmail invoice: \"\u05ea\u05e9\u05dc\u05d5\u05de\u05da \u05d1\u05d0\u05de\u05e6\u05e2\u05d5\u05ea \u05e4\u05dc\u05d8\u05e4\u05d5\u05e8\u05de\u05ea MAST \u05d1\u05d5\u05e6\u05e2 \u05d1\u05d4\u05e6\u05dc\u05d7\u05d4!\"",
-    "created_at": "2026-06-17T04:49:33.506783Z",
-    "updated_at": "2026-06-17T04:50:08.496647Z"
+    "created_at": "2026-06-17T04:57:31.862111Z",
+    "updated_at": "2026-06-17T04:58:06.594921Z"
   },
   {
-    "id": 163,
+    "id": 254,
     "name": "Spotify AB Subscription",
     "vendor": "Spotify AB",
     "category": "Streaming",
@@ -256,11 +236,11 @@
     "source_email_id": "19eb578a554c4bcc",
     "url": "https://paypal.co.il",
     "notes": "Imported automatically from Gmail invoice: \"Receipt for Your Payment to Spotify AB\"",
-    "created_at": "2026-06-17T04:49:23.538767Z",
-    "updated_at": "2026-06-17T04:50:09.147842Z"
+    "created_at": "2026-06-17T04:57:22.303738Z",
+    "updated_at": "2026-06-17T04:58:07.223057Z"
   },
   {
-    "id": 165,
+    "id": 255,
     "name": "Meta Platforms Techn Subscription",
     "vendor": "Meta Platforms Techn",
     "category": "Streaming",
@@ -276,11 +256,11 @@
     "source_email_id": "19e8c5d20cc754c0",
     "url": "https://paypal.co.il",
     "notes": "Imported automatically from Gmail invoice: \"Receipt for Your Payment to Meta Platforms Techn...\"",
-    "created_at": "2026-06-17T04:49:27.734106Z",
-    "updated_at": "2026-06-17T04:50:11.778586Z"
+    "created_at": "2026-06-17T04:57:26.278892Z",
+    "updated_at": "2026-06-17T04:58:09.986527Z"
   },
   {
-    "id": 169,
+    "id": 259,
     "name": "Kvuzat Shorashim Subscription",
     "vendor": "Kvuzat Shorashim",
     "category": "Streaming",
@@ -296,11 +276,11 @@
     "source_email_id": "19e78a77733a3796",
     "url": "https://paypal.co.il",
     "notes": "Imported automatically from Gmail invoice: \"You sent an automatic payment to Kvuzat Shorashim\"",
-    "created_at": "2026-06-17T04:49:30.890239Z",
-    "updated_at": "2026-06-17T04:50:12.408227Z"
+    "created_at": "2026-06-17T04:57:29.277448Z",
+    "updated_at": "2026-06-17T04:58:10.625602Z"
   },
   {
-    "id": 172,
+    "id": 262,
     "name": "egg Subscription",
     "vendor": "egg",
     "category": "Streaming",
@@ -316,31 +296,11 @@
     "source_email_id": "19e6546b73145548",
     "url": "https://egg-app.co",
     "notes": "Imported automatically from Gmail invoice: \"\u05d4\u05d5\u05d3\u05e2\u05ea \u05d7\u05d9\u05d5\u05d1 \u05de\u05d0\u05e4\u05dc\u05d9\u05e7\u05e6\u05d9\u05d9\u05ea egg\"",
-    "created_at": "2026-06-17T04:49:32.620872Z",
-    "updated_at": "2026-06-17T04:50:13.072016Z"
+    "created_at": "2026-06-17T04:57:31.016734Z",
+    "updated_at": "2026-06-17T04:58:11.292542Z"
   },
   {
-    "id": 209,
-    "name": "\u05d4\u05d0\u05d9\u05d2\u05e8\u05ea Subscription",
-    "vendor": "\u05d4\u05d0\u05d9\u05d2\u05e8\u05ea",
-    "category": "Streaming",
-    "description": "Recurring subscription",
-    "price": 70.0,
-    "currency": "ILS",
-    "cycle": "monthly",
-    "monthly_equiv": 70.0,
-    "status": "active",
-    "started_at": "2026-02-26",
-    "trial_ends_at": "",
-    "next_charge_at": "",
-    "source_email_id": "19cddd648c9f8af9",
-    "url": "https://adamolam.com",
-    "notes": "Imported automatically from Gmail invoice: \"\u05d8\u05e2\u05dd \u05d4\u05e9\u05d3\u05d4 [\u05d0\u05d9\u05d2\u05e8\u05ea 714]\"",
-    "created_at": "2026-06-17T04:50:08.924396Z",
-    "updated_at": "2026-06-17T04:50:13.293458Z"
-  },
-  {
-    "id": 176,
+    "id": 266,
     "name": "Netflix Subscription",
     "vendor": "Netflix",
     "category": "Streaming",
@@ -356,7 +316,7 @@
     "source_email_id": "19e5778a53f0ebb8",
     "url": "https://paypal.co.il",
     "notes": "Imported automatically from Gmail invoice: \"Receipt for Your Payment to Netflix.com\"",
-    "created_at": "2026-06-17T04:49:35.251070Z",
-    "updated_at": "2026-06-17T04:50:14.106103Z"
+    "created_at": "2026-06-17T04:57:33.609504Z",
+    "updated_at": "2026-06-17T04:58:12.358970Z"
   }
 ]

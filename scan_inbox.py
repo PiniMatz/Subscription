@@ -185,6 +185,18 @@ def parse_email_data(service, msg_id):
     date_str = next((h['value'] for h in headers if h['name'].lower() == 'date'), '')
     snippet = msg.get('snippet', '')
     
+    # Subject must contain at least one transactional keyword (e.g. invoice, receipt, payment, renew)
+    subject_lower = subject.lower()
+    tx_keywords = [
+        "receipt", "invoice", "bill", "payment", "charged", "order", "renew", 
+        "renewal", "autopay", "automatic", "charge", "trial", "subscription", 
+        "purchase", "paid", "קבלה", "קבל", "חשבונית", "חיוב", "תשלום", "תשלומ", "אישור", 
+        "רכישה", "הזמנה", "מנוי", "חידוש", "הוראת קבע"
+    ]
+    if not any(k in subject_lower for k in tx_keywords):
+        print(f"Skipping: Email subject does not contain transactional keywords ({subject})")
+        return None
+    
     # Find email body (recursively traversing all parts)
     body = get_email_body_recursive(payload)
     if not body:
