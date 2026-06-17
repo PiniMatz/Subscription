@@ -2,6 +2,7 @@ const express = require('express');
 const { DatabaseSync } = require('node:sqlite');
 const path = require('path');
 const fs = require('fs');
+const { exec } = require('child_process');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -208,66 +209,36 @@ const mockPool = [
   { name: "DuoLingo Super", vendor: "DuoLingo", category: "Software/SaaS", price: 29.90, currency: "ILS", cycle: "monthly", description: "Language learning subscription", status: "trial", trial_ends_at: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().substring(0, 10), notes: "Trial subscription" }
 ];
 
-// 6. Trigger scanning (mocked)
+// 6. Trigger scanning (real execution)
 app.post('/api/trigger-scan', authMiddleware, (req, res) => {
-  try {
-    // 1. Get existing vendors in database
-    const existingVendors = new Set(
-      db.prepare("SELECT vendor FROM subscriptions").all().map(r => r.vendor.toLowerCase())
-    );
-
-    // 2. Find first item in mockPool that is not in db
-    const nextMock = mockPool.find(item => !existingVendors.has(item.vendor.toLowerCase()));
-
-    if (!nextMock) {
-      return res.json({ ok: true, found: false, message: "No new subscription emails found. Your database is up to date!" });
+  console.log("Live scan triggered from Web UI. Running scan_inbox.py...");
+  
+  const pythonCmd = process.platform === 'win32' ? 'python' : 'python3';
+  exec(`"${pythonCmd}" scan_inbox.py`, (error, stdout, stderr) => {
+    if (error) {
+      console.error(`Error executing scan_inbox.py: ${error.message}`);
+      return res.status(500).json({ error: "Scanner execution failed: " + error.message });
     }
-
-    // 3. Insert mock subscription
-    const monthly_equiv = calculateMonthlyEquiv(nextMock.price, nextMock.cycle);
-    const now = new Date().toISOString().replace('T', ' ').substring(0, 19);
-    const started_at = new Date().toISOString().substring(0, 10); // Today
-
-    const insertStmt = db.prepare(`
-      INSERT INTO subscriptions
-      (name, vendor, category, description, price, currency, cycle, monthly_equiv, status, started_at, trial_ends_at, url, notes, created_at, updated_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `);
-
-    insertStmt.run(
-      nextMock.name, nextMock.vendor, nextMock.category, nextMock.description, nextMock.price, nextMock.currency, nextMock.cycle, 
-      monthly_equiv, nextMock.status, started_at, nextMock.trial_ends_at || null, nextMock.url || null, nextMock.notes || null, 
-      now, now
-    );
-
-    // 4. Update email_state
-    const stateStmt = db.prepare("SELECT seen_ids FROM email_state WHERE id = 1");
-    const stateRow = stateStmt.all()[0];
-    const currentSeenIds = JSON.parse(stateRow && stateRow.seen_ids ? stateRow.seen_ids : '[]');
     
-    const mockEmailId = "mock_msg_" + Math.random().toString(36).substring(2, 11);
-    currentSeenIds.push(mockEmailId);
-
-    const updateStateStmt = db.prepare(`
-      UPDATE email_state
-      SET last_scanned_ts = ?, seen_ids = ?
-      WHERE id = 1
-    `);
-    updateStateStmt.run(new Date().toISOString(), JSON.stringify(currentSeenIds));
-
-    // Wait a brief simulated scanner time
-    setTimeout(() => {
-      res.json({
-        ok: true,
-        found: true,
-        message: `Found subscription for ${nextMock.name} (${nextMock.price} ${nextMock.currency})!`,
-        subscription: nextMock
-      });
-    }, 1500); // 1.5 seconds latency to feel like a real scan
+    console.log(`Scanner stdout: ${stdout}`);
+    if (stderr) console.error(`Scanner stderr: ${stderr}`);
     
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+    // Parse how many new subscriptions were added
+    // Expected output format: "Scan finished. Added X new subscriptions."
+    let addedCount = 0;
+    const match = stdout.match(/Added\s+(\d+)\s+new\s+subscriptions/i);
+    if (match) {
+      addedCount = parseInt(match[1]);
+    }
+    
+    res.json({
+      ok: true,
+      found: addedCount > 0,
+      message: addedCount > 0 
+        ? `Scan finished! Found and added ${addedCount} new subscription(s) from your inbox.`
+        : "Scan finished. No new subscription emails found. Your dashboard is up to date!"
+    });
+  });
 });
 
 // Start server

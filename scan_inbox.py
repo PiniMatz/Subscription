@@ -4,6 +4,9 @@ import json
 import re
 import sqlite3
 import sys
+if hasattr(sys.stdout, 'reconfigure'):
+    sys.stdout.reconfigure(encoding='utf-8')
+import base64
 from datetime import datetime, timezone
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
@@ -103,6 +106,33 @@ def guess_category(vendor, subject, body):
             return cat
     return "Other"
 
+def get_email_body_recursive(part):
+    """Recursively extract text or html body from email parts."""
+    mime_type = part.get('mimeType', '')
+    body_data = part.get('body', {}).get('data', '')
+    
+    if body_data:
+        decoded = base64_decode(body_data)
+        if mime_type in ['text/plain', 'text/html']:
+            return decoded
+            
+    nested_parts = part.get('parts', [])
+    plain_text = ""
+    html_text = ""
+    
+    for subpart in nested_parts:
+        content = get_email_body_recursive(subpart)
+        sub_mime = subpart.get('mimeType', '')
+        if content:
+            if sub_mime == 'text/plain':
+                plain_text = content
+            elif sub_mime == 'text/html':
+                html_text = content
+            elif not plain_text and not html_text:
+                plain_text = content
+                
+    return plain_text if plain_text else html_text
+
 def parse_email_data(service, msg_id):
     msg = service.users().messages().get(userId='me', id=msg_id, format='full').execute()
     payload = msg.get('payload', {})
@@ -114,19 +144,10 @@ def parse_email_data(service, msg_id):
     date_str = next((h['value'] for h in headers if h['name'].lower() == 'date'), '')
     snippet = msg.get('snippet', '')
     
-    # Find email body (fallback to snippet if body is complex)
-    body = snippet
-    parts = payload.get('parts', [])
-    if not parts and 'body' in payload and 'data' in payload['body']:
-        body_data = payload['body']['data']
-        body = base64_decode(body_data)
-    else:
-        for part in parts:
-            if part.get('mimeType') == 'text/plain' and 'data' in part.get('body', {}):
-                body = base64_decode(part['body']['data'])
-                break
-            elif part.get('mimeType') == 'text/html' and 'data' in part.get('body', {}):
-                body = base64_decode(part['body']['data'])
+    # Find email body (recursively traversing all parts)
+    body = get_email_body_recursive(payload)
+    if not body:
+        body = snippet
     
     # Parse sender email domain
     sender_email = sender
@@ -150,6 +171,14 @@ def parse_email_data(service, msg_id):
             category = rule['category']
             description = rule['desc']
             break
+            
+    # Normalize vendor name if it contains well-known services
+    vendor_lower = vendor.lower()
+    if "railway" in vendor_lower:
+        vendor = "Railway"
+        category = "Software/SaaS"
+        description = "Cloud application hosting platform"
+        domain = "railway.app"
             
     # Guess category if not matched by rules
     if not category:
