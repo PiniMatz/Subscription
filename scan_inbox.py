@@ -33,6 +33,47 @@ VENDOR_RULES = [
   {"domain": "duolingo.com", "vendor": "DuoLingo", "name": "DuoLingo Super", "category": "Software/SaaS", "desc": "Language learning subscription"}
 ]
 
+# Classification configuration for filtering recurring subscriptions
+KNOWN_SUB_VENDORS = [
+    "netflix", "spotify", "openai", "chatgpt", "adobe", "github", "copilot", 
+    "apple", "icloud", "google", "youtube", "amazon", "duolingo", "railway", 
+    "anthropic", "claude", "zoom", "notion", "canva", "malwarebytes", "moremins", 
+    "hetzner", "digitalocean", "digital ocean", "aws", "microsoft", "azure", 
+    "fitxr", "playstation", "xbox", "nintendo"
+]
+
+ONETIME_VENDORS = [
+    "iherb", "zenni", "aliexpress", "ali-express", "ebay", "shein", "temu", "ksp", 
+    "nextdirect", "next", "pazgas", "super-pharm", "סופר-פארם", "שופרסל", "רמי לוי", 
+    "קסטרו", "האגיס", "עיריית נתניה", "משרד הבינוי", "המוסד לביטוח לאומי", "חברת החשמל",
+    "בורגר סאלון", "מקדונלדס", "wolt", "מילואים", "עירייה", "פזגז", "איוויס", "avis", 
+    "booking", "מזרחי טפחות", "דיסקונט", "לאומי", "פועלים", "פניקס", "מנורה",
+    "שירביט", "הראל", "giveback", "escaperoom", "חניאל", "livingreen", "מכבי", "כללית", 
+    "swish", "בהצדעה", "ישראכרט", "cal", "pay-back", "payback"
+]
+
+ONETIME_KEYWORDS = [
+    "order confirmation", "order confirmed", "your order", "shipping confirmation", 
+    "shipped", "delivery", "track your package", "purchase receipt", "אישור הזמנה", 
+    "הזמנתך", "ההזמנה שלך", "פרטי הזמנה", "משלוח", "רכישה", "קנייה", "רכישת", "הזמנה מספר"
+]
+
+SUB_KEYWORDS = [
+    "subscription", "renew", "renewal", "recurring", "auto-renew", "billed monthly", 
+    "billed yearly", "membership", "license", "trial", "מנוי", "חידוש", "הוראת קבע", 
+    "תשלום מחזורי", "חידוש אוטומטי", "תקופת מנוי"
+]
+
+REFUND_KEYWORDS = [
+    "החזר", "זיכוי", "כסף בחזרה", "refund", "cashback", "credit note", "credit memo", 
+    "refunded", "credited"
+]
+
+PROMO_KEYWORDS = [
+    "פרסומת", "מבצע", "הטבה", "ניוזלטר", "newsletter", "replays", "bogo", "off*", 
+    "coupon", "promo code", "last chance", "sale ends"
+]
+
 def search_subscription_emails(service, last_scanned_ts=None):
     # Expanded query: searches both subject and body content (no subject: prefix), including Hebrew terms
     query = ('(receipt OR invoice OR renewal OR trial OR confirmation OR charged OR "auto-renew" OR subscribe OR '
@@ -179,6 +220,50 @@ def parse_email_data(service, msg_id):
         category = "Software/SaaS"
         description = "Cloud application hosting platform"
         domain = "railway.app"
+        vendor_lower = "railway"
+        
+    # PayPal merchant extraction
+    if "paypal" in vendor_lower or "paypal" in domain:
+        merchant_match = re.search(r'(?:to|with|payment to|payment of .* to)\s+([^,\.\n\r#]+)', subject)
+        if merchant_match:
+            merchant = merchant_match.group(1).strip()
+            merchant = re.sub(r'(?i)\b(ltd|inc|corp|co|gmbh|\.com|\.co\.il)\b', '', merchant).strip()
+            merchant = re.sub(r'\s+', ' ', merchant).strip()
+            vendor = merchant
+            vendor_lower = vendor.lower()
+
+    # --- Run Classification Filters to ignore non-subscriptions ---
+    subject_lower = subject.lower()
+    body_lower = body.lower()
+    snippet_lower = snippet.lower()
+    
+    # 1. Check for refunds, cashbacks, or credits
+    if any(k in subject_lower or k in snippet_lower or k in body_lower for k in REFUND_KEYWORDS):
+        print(f"Skipping: Refund, credit, or cashback detected ({subject})")
+        return None
+        
+    # 2. Check for promotions/marketing ads
+    if any(k in subject_lower for k in PROMO_KEYWORDS):
+        print(f"Skipping: Promotional email or advertisement ({subject})")
+        return None
+        
+    # 3. Check for known one-time purchase services/stores
+    if any(v in vendor_lower or v in domain for v in ONETIME_VENDORS):
+        if "wolt" in vendor_lower and ("wolt+" in subject_lower or "wolt plus" in subject_lower or "wolt+" in body_lower):
+            pass
+        else:
+            print(f"Skipping: Known one-time vendor/service ({vendor})")
+            return None
+            
+    # 4. Check one-time purchase vs recurring keywords
+    has_onetime = any(k in subject_lower or k in snippet_lower for k in ONETIME_KEYWORDS)
+    has_sub = any(k in subject_lower or k in snippet_lower or k in body_lower for k in SUB_KEYWORDS)
+    
+    is_known_sub_vendor = any(v in vendor_lower for v in KNOWN_SUB_VENDORS)
+    
+    if has_onetime and not has_sub and not is_known_sub_vendor:
+        print(f"Skipping: One-time order or purchase detected ({subject})")
+        return None
             
     # Guess category if not matched by rules
     if not category:
@@ -347,6 +432,9 @@ def main():
             print(f"\nProcessing Email ID: {msg_id}")
             sub_details = parse_email_data(service, msg_id)
             new_seen_ids.append(msg_id)
+            
+            if not sub_details:
+                continue
             
             # Skip emails where we failed to find a valid price (e.g. false alerts)
             if sub_details['price'] <= 0.0:
