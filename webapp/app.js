@@ -91,18 +91,209 @@
         renderSubscriptionsList();
         renderRenewalsTimeline();
         calculateAndRenderStaticSummaries();
+        generateRedundancyInsights();
         setupStaticUI();
       } else {
         allSubscriptions = await apiCall('GET', '/api/subscriptions');
         renderSubscriptionsList();
         renderRenewalsTimeline();
         await loadSummaries();
+        generateRedundancyInsights();
       }
     } catch (err) {
       console.error("Failed to load dashboard data:", err);
       if (isStaticMode) {
         showToast("Failed to load subscriptions.json.", "error");
       }
+    }
+  }
+
+  function convertToUSD(amount, currency) {
+    const rate = CONVERSION_RATES[currency] || 1.0;
+    return amount * rate;
+  }
+
+  function generateRedundancyInsights() {
+    const insightsContainer = document.getElementById('insightsContainer');
+    const insightsSection = document.getElementById('insightsSection');
+    if (!insightsContainer || !insightsSection) return;
+
+    insightsContainer.innerHTML = '';
+    
+    // Filter active subscriptions only
+    const activeSubs = allSubscriptions.filter(s => s.status === 'active');
+    
+    const insights = [];
+
+    // Grouping by function
+    const cloudHosting = [];
+    const aiAssistants = [];
+    const videoStreaming = [];
+    const musicStreaming = [];
+    const cloudStorage = [];
+
+    activeSubs.forEach(s => {
+      const name = s.name.toLowerCase();
+      const vendor = s.vendor.toLowerCase();
+      const cat = s.category.toLowerCase();
+
+      // 1. Cloud hosting services
+      if (
+        vendor.includes('hetzner') || vendor.includes('digitalocean') || vendor.includes('digital ocean') ||
+        vendor.includes('railway') || vendor.includes('aws') || vendor.includes('amazon web services') ||
+        vendor.includes('vercel') || vendor.includes('render') || vendor.includes('heroku') || vendor.includes('supabase')
+      ) {
+        cloudHosting.push(s);
+      }
+
+      // 2. AI assistants
+      else if (
+        vendor.includes('openai') || name.includes('chatgpt') || 
+        vendor.includes('anthropic') || name.includes('claude')
+      ) {
+        aiAssistants.push(s);
+      }
+
+      // 3. Cloud Storage
+      else if (
+        cat.includes('storage') || name.includes('icloud') || 
+        vendor.includes('dropbox') || name.includes('onedrive') || name.includes('google one')
+      ) {
+        cloudStorage.push(s);
+      }
+
+      // 4. Video Streaming
+      else if (
+        cat === 'streaming' && 
+        (vendor.includes('netflix') || vendor.includes('disney') || vendor.includes('hbo') || 
+         vendor.includes('max') || vendor.includes('paramount') || vendor.includes('hulu') || 
+         vendor.includes('prime video') || vendor.includes('apple tv'))
+      ) {
+        videoStreaming.push(s);
+      }
+
+      // 5. Music Streaming
+      else if (
+        cat === 'music' || vendor.includes('spotify') || vendor.includes('deezer') || 
+        vendor.includes('tidal') || name.includes('apple music') || name.includes('youtube music')
+      ) {
+        musicStreaming.push(s);
+      }
+    });
+
+    // Generate Insight: Cloud Hosting Redundancy
+    if (cloudHosting.length > 1) {
+      const namesList = cloudHosting.map(s => s.vendor).join(', ');
+      const totalCost = cloudHosting.reduce((sum, s) => sum + convertToUSD(s.monthly_equiv, s.currency), 0);
+      const cheapest = cloudHosting.reduce((min, s) => {
+        const cost = convertToUSD(s.monthly_equiv, s.currency);
+        return cost < min ? cost : min;
+      }, Infinity);
+      const potentialSavings = totalCost - cheapest;
+
+      insights.push({
+        title: "Infrastructure Redundancy",
+        desc: `You have <strong>${cloudHosting.length} cloud hosting/infra providers</strong> active: <strong>${namesList}</strong>. Consider consolidating your apps/databases onto a single cloud platform.`,
+        savings: potentialSavings > 0 ? `Potential savings: up to $${potentialSavings.toFixed(2)}/month` : null,
+        type: 'warning',
+        icon: 'fa-server'
+      });
+    }
+
+    // Generate Insight: AI Assistants Redundancy
+    if (aiAssistants.length > 1) {
+      const namesList = aiAssistants.map(s => s.vendor).join(', ');
+      const totalCost = aiAssistants.reduce((sum, s) => sum + convertToUSD(s.monthly_equiv, s.currency), 0);
+      const cheapest = aiAssistants.reduce((min, s) => {
+        const cost = convertToUSD(s.monthly_equiv, s.currency);
+        return cost < min ? cost : min;
+      }, Infinity);
+      const potentialSavings = totalCost - cheapest;
+
+      insights.push({
+        title: "AI Assistants Redundancy",
+        desc: `You have <strong>${aiAssistants.length} premium AI assistants</strong> active: <strong>${namesList}</strong>. OpenAI (ChatGPT Plus) and Anthropic (Claude Pro) serve similar general capabilities. Consider keeping only one.`,
+        savings: potentialSavings > 0 ? `Potential savings: up to $${potentialSavings.toFixed(2)}/month` : null,
+        type: 'warning',
+        icon: 'fa-brain'
+      });
+    }
+
+    // Generate Insight: Cloud Storage Redundancy
+    if (cloudStorage.length > 1) {
+      const namesList = cloudStorage.map(s => s.name || s.vendor).join(', ');
+      const totalCost = cloudStorage.reduce((sum, s) => sum + convertToUSD(s.monthly_equiv, s.currency), 0);
+      const cheapest = cloudStorage.reduce((min, s) => {
+        const cost = convertToUSD(s.monthly_equiv, s.currency);
+        return cost < min ? cost : min;
+      }, Infinity);
+      const potentialSavings = totalCost - cheapest;
+
+      insights.push({
+        title: "Storage Consolidation Opportunity",
+        desc: `You have <strong>${cloudStorage.length} cloud storage subscriptions</strong> active: <strong>${namesList}</strong>. Backing up files to a single platform could prevent paying for multiple base-tier partition slots.`,
+        savings: potentialSavings > 0 ? `Potential savings: up to $${potentialSavings.toFixed(2)}/month` : null,
+        type: 'info',
+        icon: 'fa-cloud'
+      });
+    }
+
+    // Generate Insight: Video Streaming Overlap
+    if (videoStreaming.length > 1) {
+      const namesList = videoStreaming.map(s => s.vendor).join(', ');
+      insights.push({
+        title: "Video Streaming Overlap",
+        desc: `You have <strong>${videoStreaming.length} video streaming services</strong> active: <strong>${namesList}</strong>. Entertainment libraries rarely overlap completely. Consider rotating subscriptions (pausing Netflix when watching Disney+, etc.) to cut costs.`,
+        savings: "Tip: Cycle subscriptions as needed to save.",
+        type: 'info',
+        icon: 'fa-tv'
+      });
+    }
+
+    // Generate Insight: Music Streaming Redundancy
+    if (musicStreaming.length > 1) {
+      const namesList = musicStreaming.map(s => s.vendor).join(', ');
+      const totalCost = musicStreaming.reduce((sum, s) => sum + convertToUSD(s.monthly_equiv, s.currency), 0);
+      const cheapest = musicStreaming.reduce((min, s) => {
+        const cost = convertToUSD(s.monthly_equiv, s.currency);
+        return cost < min ? cost : min;
+      }, Infinity);
+      const potentialSavings = totalCost - cheapest;
+
+      insights.push({
+        title: "Music Streaming Redundancy",
+        desc: `You have <strong>${musicStreaming.length} music streaming providers</strong> active: <strong>${namesList}</strong>. Since catalogs are almost identical, you are likely paying twice for the same songs.`,
+        savings: potentialSavings > 0 ? `Potential savings: up to $${potentialSavings.toFixed(2)}/month` : null,
+        type: 'danger',
+        icon: 'fa-music'
+      });
+    }
+
+    // Render Insights
+    if (insights.length > 0) {
+      insights.forEach(ins => {
+        const card = document.createElement('div');
+        card.className = 'insight-card';
+        
+        let iconClass = 'warning';
+        if (ins.type === 'danger') iconClass = 'danger';
+        if (ins.type === 'info') iconClass = 'info';
+
+        card.innerHTML = `
+          <div class="insight-icon ${iconClass}">
+            <i class="fa-solid ${ins.icon}"></i>
+          </div>
+          <div class="insight-content">
+            <h5 class="insight-title">${ins.title}</h5>
+            <p class="insight-desc">${ins.desc}</p>
+            ${ins.savings ? `<div class="insight-savings"><i class="fa-solid fa-piggy-bank"></i> ${ins.savings}</div>` : ''}
+          </div>
+        `;
+        insightsContainer.appendChild(card);
+      });
+      insightsSection.style.display = 'flex';
+    } else {
+      insightsSection.style.display = 'none';
     }
   }
 
