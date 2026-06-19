@@ -14,8 +14,15 @@ console.log("Connecting to SQLite database at:", dbPath);
 let db;
 try {
   db = new DatabaseSync(dbPath);
+  // Ensure the blocked_vendors table exists
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS blocked_vendors (
+      vendor TEXT PRIMARY KEY,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+  `);
 } catch (err) {
-  console.error("Failed to connect to SQLite DB:", err.message);
+  console.error("Failed to connect to SQLite DB or initialize tables:", err.message);
   process.exit(1);
 }
 
@@ -46,6 +53,25 @@ function calculateMonthlyEquiv(price, cycle) {
   };
   const multiplier = cycles[cycle.toLowerCase()] !== undefined ? cycles[cycle.toLowerCase()] : 1.0;
   return price * multiplier;
+}
+
+// Export current subscriptions to static JSON file
+function exportToJson() {
+  try {
+    const stmt = db.prepare("SELECT * FROM subscriptions ORDER BY started_at DESC");
+    const rows = stmt.all();
+    const subs = rows.map(r => {
+      const d = { ...r };
+      d.price = Number(d.price);
+      d.monthly_equiv = Number(d.monthly_equiv);
+      return d;
+    });
+    const jsonPath = path.join(__dirname, 'webapp', 'subscriptions.json');
+    fs.writeFileSync(jsonPath, JSON.stringify(subs, null, 2), 'utf8');
+    console.log(`Exported ${subs.length} subscriptions to ${jsonPath}`);
+  } catch (err) {
+    console.error("Failed to export subscriptions to JSON:", err.message);
+  }
 }
 
 // Serve static webapp files but inject AUTH_TOKEN in index.html first
@@ -107,6 +133,8 @@ app.post('/api/subscriptions', authMiddleware, (req, res) => {
       now, now
     );
 
+    exportToJson();
+
     res.json({ ok: true, message: "Subscription added successfully" });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -143,6 +171,8 @@ app.put('/api/subscriptions/:id', authMiddleware, (req, res) => {
       now, parseInt(id)
     );
 
+    exportToJson();
+
     res.json({ ok: true, message: "Subscription updated successfully" });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -153,9 +183,69 @@ app.put('/api/subscriptions/:id', authMiddleware, (req, res) => {
 app.delete('/api/subscriptions/:id', authMiddleware, (req, res) => {
   try {
     const { id } = req.params;
-    const stmt = db.prepare("DELETE FROM subscriptions WHERE id = ?");
-    stmt.run(parseInt(id));
+    const blockVendor = req.query.blockVendor === 'true';
+    
+    // Retrieve the vendor name first
+    const selectStmt = db.prepare("SELECT vendor FROM subscriptions WHERE id = ?");
+    const sub = selectStmt.get(parseInt(id));
+    
+    if (!sub) {
+      return res.status(404).json({ error: "Subscription not found" });
+    }
+    
+    const delStmt = db.prepare("DELETE FROM subscriptions WHERE id = ?");
+    delStmt.run(parseInt(id));
+    
+    if (blockVendor) {
+      const blockStmt = db.prepare("INSERT OR IGNORE INTO blocked_vendors (vendor) VALUES (?)");
+      blockStmt.run(sub.vendor);
+      
+      // Delete any other subscriptions from the same vendor to keep it clean
+      const cleanStmt = db.prepare("DELETE FROM subscriptions WHERE vendor = ?");
+      cleanStmt.run(sub.vendor);
+    }
+    
+    exportToJson();
+    
     res.json({ ok: true, message: "Subscription deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// 4a. Get all blocked vendors
+app.get('/api/blocked-vendors', authMiddleware, (req, res) => {
+  try {
+    const stmt = db.prepare("SELECT * FROM blocked_vendors ORDER BY created_at DESC");
+    const rows = stmt.all();
+    res.json(rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// 4b. Block a vendor manually
+app.post('/api/blocked-vendors', authMiddleware, (req, res) => {
+  try {
+    const { vendor } = req.body;
+    if (!vendor) {
+      return res.status(400).json({ error: "Missing vendor name" });
+    }
+    const stmt = db.prepare("INSERT OR IGNORE INTO blocked_vendors (vendor) VALUES (?)");
+    stmt.run(vendor);
+    res.json({ ok: true, message: `Vendor '${vendor}' blocked successfully` });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// 4c. Unblock a vendor
+app.delete('/api/blocked-vendors/:vendor', authMiddleware, (req, res) => {
+  try {
+    const { vendor } = req.params;
+    const stmt = db.prepare("DELETE FROM blocked_vendors WHERE vendor = ?");
+    stmt.run(vendor);
+    res.json({ ok: true, message: `Vendor '${vendor}' unblocked successfully` });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

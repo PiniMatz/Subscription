@@ -17,7 +17,7 @@
     "url": "https://hetzner.com",
     "notes": "Imported automatically from Gmail invoice: \"Hetzner Online GmbH - Invoice 085000985712 (K0521211426)\"",
     "created_at": "2026-06-17T04:57:27.114372Z",
-    "updated_at": "2026-06-17T04:57:27.114372Z"
+    "updated_at": "2026-06-19T07:36:31.948164Z"
   },
   {
     "id": 260,
@@ -37,7 +37,7 @@
     "url": "https://mail.anthropic.com",
     "notes": "Imported automatically from Gmail invoice: \"Your receipt from Anthropic, PBC #2598-7551-9817\"",
     "created_at": "2026-06-17T04:57:29.717783Z",
-    "updated_at": "2026-06-17T04:57:29.717783Z"
+    "updated_at": "2026-06-19T07:36:34.712953Z"
   },
   {
     "id": 257,
@@ -57,7 +57,7 @@
     "url": "https://google.com",
     "notes": "Imported automatically from Gmail invoice: \"Google Cloud Platform & APIs: Payment received\"",
     "created_at": "2026-06-17T04:57:27.343898Z",
-    "updated_at": "2026-06-17T04:57:45.137253Z"
+    "updated_at": "2026-06-19T07:36:50.688195Z"
   },
   {
     "id": 258,
@@ -77,7 +77,7 @@
     "url": "https://digitalocean.com",
     "notes": "Imported automatically from Gmail invoice: \"DigitalOcean - Received $1.69 payment\"",
     "created_at": "2026-06-17T04:57:27.966222Z",
-    "updated_at": "2026-06-17T04:57:45.561047Z"
+    "updated_at": "2026-06-19T07:36:51.131634Z"
   },
   {
     "id": 265,
@@ -97,7 +97,7 @@
     "url": "https://tx.zety.com",
     "notes": "Imported automatically from Gmail invoice: \"Thank you for your order!\"",
     "created_at": "2026-06-17T04:57:33.156374Z",
-    "updated_at": "2026-06-17T04:57:47.497597Z"
+    "updated_at": "2026-06-19T07:36:53.118523Z"
   },
   {
     "id": 261,
@@ -117,7 +117,7 @@
     "url": "https://paypal.co.il",
     "notes": "Imported automatically from Gmail invoice: \"Receipt for Your Payment to Moremins Ltd\"",
     "created_at": "2026-06-17T04:57:30.155657Z",
-    "updated_at": "2026-06-17T04:57:49.168864Z"
+    "updated_at": "2026-06-19T07:36:54.790384Z"
   },
   {
     "id": 279,
@@ -137,87 +137,27 @@
     "url": "https://railway.app",
     "notes": "Imported automatically from Gmail invoice: \"Your receipt from Railway Corporation #2228-3006\"",
     "created_at": "2026-06-17T04:57:50.008628Z",
-    "updated_at": "2026-06-17T04:57:50.008628Z"
+    "updated_at": "2026-06-19T07:36:55.664575Z"
   },
   {
-    "id": 267,
-    "name": "DoNotReply@matnasim.org.il Subscription",
-    "vendor": "DoNotReply@matnasim.org.il",
+    "id": 266,
+    "name": "Netflix Subscription",
+    "vendor": "Netflix",
     "category": "Streaming",
     "description": "Recurring subscription",
-    "price": 150.0,
+    "price": 69.9,
     "currency": "ILS",
     "cycle": "monthly",
-    "monthly_equiv": 150.0,
+    "monthly_equiv": 69.9,
     "status": "active",
-    "started_at": "2026-04-16",
+    "started_at": "2026-03-23",
     "trial_ends_at": "",
     "next_charge_at": "",
-    "source_email_id": "19e3a4a8341d4873",
-    "url": "https://matnasim.org.il",
-    "notes": "Imported automatically from Gmail invoice: \"\u05de\u05e6\"\u05d1 \u05e7\u05d1\u05dc\u05d5\u05ea \u05de\u05de\u05ea\u05e0\"\u05e1 \u05de\u05e8\u05db\u05d6 \u05e7\u05d4\u05d9\u05dc\u05ea\u05d9 \u05e4\u05e8\u05d3\u05e1\u05d9\u05d4 - \u05e2\u05d1\u05d5\u05e8 \u05de\u05e6\u05e0\u05e8 \u05e4\u05d9\u05e0\u05d9\"",
-    "created_at": "2026-06-17T04:57:36.617861Z",
-    "updated_at": "2026-06-17T04:57:54.428703Z"
-  },
-  {
-    "id": 264,
-    "name": "Gov Subscription",
-    "vendor": "Gov",
-    "category": "Streaming",
-    "description": "Recurring subscription",
-    "price": 14.0,
-    "currency": "ILS",
-    "cycle": "monthly",
-    "monthly_equiv": 14.0,
-    "status": "active",
-    "started_at": "2026-04-15",
-    "trial_ends_at": "",
-    "next_charge_at": "",
-    "source_email_id": "19e5e4c748546259",
-    "url": "https://ecom.gov.il",
-    "notes": "Imported automatically from Gmail invoice: \"\u05e9\u05d9\u05e8\u05d5\u05ea \u05d4\u05ea\u05e9\u05dc\u05d5\u05de\u05d9\u05dd \u05d4\u05de\u05de\u05e9\u05dc\u05ea\u05d9 - \u05d0\u05d2\u05e8\u05ea \u05e8\u05d9\u05e9\u05d9\u05d5\u05df \u05e0\u05d4\u05d9\u05d2\u05d4 - \u05de\u05e9\u05e8\u05d3 \u05d4\u05ea\u05d7\u05d1\u05d5\u05e8\u05d4 - \u05de\u05e1\u05e4\u05e8 \u05d4\u05d4\u05d6\u05de\u05e0\u05d4 281916058\"",
-    "created_at": "2026-06-17T04:57:32.075274Z",
-    "updated_at": "2026-06-17T04:57:55.053654Z"
-  },
-  {
-    "id": 268,
-    "name": "Hahishook Contact Subscription",
-    "vendor": "Hahishook Contact",
-    "category": "Streaming",
-    "description": "Recurring subscription",
-    "price": 15.6,
-    "currency": "ILS",
-    "cycle": "monthly",
-    "monthly_equiv": 15.6,
-    "status": "active",
-    "started_at": "2026-03-25",
-    "trial_ends_at": "",
-    "next_charge_at": "",
-    "source_email_id": "19e24c1d9674474d",
-    "url": "https://hahishook.com",
-    "notes": "Imported automatically from Gmail invoice: \"\u05d4\u05d6\u05de\u05e0\u05d4 528680WB \u05de\u05d0\u05ea\u05e8 \u05d4\u05d7\u05d9\u05e9\u05d5\u05e7 \u05d4\u05ea\u05e7\u05d1\u05dc\u05d4!\"",
-    "created_at": "2026-06-17T04:57:38.893910Z",
-    "updated_at": "2026-06-17T04:58:02.104369Z"
-  },
-  {
-    "id": 263,
-    "name": "MAST Subscription",
-    "vendor": "MAST",
-    "category": "Streaming",
-    "description": "Recurring subscription",
-    "price": 2.0,
-    "currency": "ILS",
-    "cycle": "monthly",
-    "monthly_equiv": 2.0,
-    "status": "active",
-    "started_at": "2026-03-12",
-    "trial_ends_at": "",
-    "next_charge_at": "",
-    "source_email_id": "19e5e4f9f498cecb",
-    "url": "https://send.vpcontact.com",
-    "notes": "Imported automatically from Gmail invoice: \"\u05ea\u05e9\u05dc\u05d5\u05de\u05da \u05d1\u05d0\u05de\u05e6\u05e2\u05d5\u05ea \u05e4\u05dc\u05d8\u05e4\u05d5\u05e8\u05de\u05ea MAST \u05d1\u05d5\u05e6\u05e2 \u05d1\u05d4\u05e6\u05dc\u05d7\u05d4!\"",
-    "created_at": "2026-06-17T04:57:31.862111Z",
-    "updated_at": "2026-06-17T04:58:06.594921Z"
+    "source_email_id": "19e5778a53f0ebb8",
+    "url": "https://paypal.co.il",
+    "notes": "Imported automatically from Gmail invoice: \"Receipt for Your Payment to Netflix.com\"",
+    "created_at": "2026-06-17T04:57:33.609504Z",
+    "updated_at": "2026-06-19T07:37:09.708565Z"
   },
   {
     "id": 254,
@@ -237,7 +177,7 @@
     "url": "https://paypal.co.il",
     "notes": "Imported automatically from Gmail invoice: \"Receipt for Your Payment to Spotify AB\"",
     "created_at": "2026-06-17T04:57:22.303738Z",
-    "updated_at": "2026-06-17T04:58:07.223057Z"
+    "updated_at": "2026-06-19T07:37:13.090790Z"
   },
   {
     "id": 255,
@@ -257,7 +197,7 @@
     "url": "https://paypal.co.il",
     "notes": "Imported automatically from Gmail invoice: \"Receipt for Your Payment to Meta Platforms Techn...\"",
     "created_at": "2026-06-17T04:57:26.278892Z",
-    "updated_at": "2026-06-17T04:58:09.986527Z"
+    "updated_at": "2026-06-19T07:37:15.855181Z"
   },
   {
     "id": 259,
@@ -277,46 +217,6 @@
     "url": "https://paypal.co.il",
     "notes": "Imported automatically from Gmail invoice: \"You sent an automatic payment to Kvuzat Shorashim\"",
     "created_at": "2026-06-17T04:57:29.277448Z",
-    "updated_at": "2026-06-17T04:58:10.625602Z"
-  },
-  {
-    "id": 262,
-    "name": "egg Subscription",
-    "vendor": "egg",
-    "category": "Streaming",
-    "description": "Recurring subscription",
-    "price": 161.5,
-    "currency": "ILS",
-    "cycle": "monthly",
-    "monthly_equiv": 161.5,
-    "status": "active",
-    "started_at": "2026-02-26",
-    "trial_ends_at": "",
-    "next_charge_at": "",
-    "source_email_id": "19e6546b73145548",
-    "url": "https://egg-app.co",
-    "notes": "Imported automatically from Gmail invoice: \"\u05d4\u05d5\u05d3\u05e2\u05ea \u05d7\u05d9\u05d5\u05d1 \u05de\u05d0\u05e4\u05dc\u05d9\u05e7\u05e6\u05d9\u05d9\u05ea egg\"",
-    "created_at": "2026-06-17T04:57:31.016734Z",
-    "updated_at": "2026-06-17T04:58:11.292542Z"
-  },
-  {
-    "id": 266,
-    "name": "Netflix Subscription",
-    "vendor": "Netflix",
-    "category": "Streaming",
-    "description": "Recurring subscription",
-    "price": 69.9,
-    "currency": "ILS",
-    "cycle": "monthly",
-    "monthly_equiv": 69.9,
-    "status": "active",
-    "started_at": "2026-02-23",
-    "trial_ends_at": "",
-    "next_charge_at": "",
-    "source_email_id": "19e5778a53f0ebb8",
-    "url": "https://paypal.co.il",
-    "notes": "Imported automatically from Gmail invoice: \"Receipt for Your Payment to Netflix.com\"",
-    "created_at": "2026-06-17T04:57:33.609504Z",
-    "updated_at": "2026-06-17T04:58:12.358970Z"
+    "updated_at": "2026-06-19T07:37:16.478881Z"
   }
 ]

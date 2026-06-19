@@ -835,10 +835,11 @@
   // Delete
   document.getElementById('confirmDeleteBtn').addEventListener('click', async () => {
     if (!deleteTargetId) return;
+    const blockVendor = document.getElementById('blockVendorCheckbox').checked;
     try {
-      const res = await apiCall('DELETE', `/api/subscriptions/${deleteTargetId}`);
+      const res = await apiCall('DELETE', `/api/subscriptions/${deleteTargetId}?blockVendor=${blockVendor}`);
       if (res.ok) {
-        showToast('Subscription deleted successfully.', 'success');
+        showToast(blockVendor ? 'Subscription deleted and vendor blocked.' : 'Subscription deleted successfully.', 'success');
         closeModal('deleteModal');
         deleteTargetId = null;
         loadDashboardData();
@@ -917,6 +918,89 @@
   }
 
   document.getElementById('addBtn').addEventListener('click', () => openModal('addModal'));
+  document.getElementById('blocklistBtn').addEventListener('click', () => {
+    openModal('blocklistModal');
+    loadBlockedVendors();
+  });
+
+  // Blocklist Manual Add Form
+  document.getElementById('addBlockedVendorForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const input = document.getElementById('blockedVendorInput');
+    const vendor = input.value.trim();
+    if (!vendor) return;
+    try {
+      const res = await apiCall('POST', '/api/blocked-vendors', { vendor });
+      if (res.ok) {
+        showToast(`Vendor '${vendor}' added to blocklist.`, 'success');
+        input.value = '';
+        loadBlockedVendors();
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  });
+
+  // Load and Render Blocked Vendors
+  async function loadBlockedVendors() {
+    const listContainer = document.getElementById('blockedVendorsList');
+    listContainer.innerHTML = '<div class="loading-spinner"><i class="fa-solid fa-circle-notch fa-spin"></i> Loading...</div>';
+    try {
+      const vendors = await apiCall('GET', '/api/blocked-vendors');
+      if (vendors.length === 0) {
+        listContainer.innerHTML = '<div class="no-data" style="text-align: center; padding: 20px 0; opacity: 0.6;"><p>No blocked vendors yet.</p></div>';
+        return;
+      }
+      
+      listContainer.innerHTML = '';
+      vendors.forEach(v => {
+        const item = document.createElement('div');
+        item.className = 'blocked-vendor-item';
+        
+        const leftDiv = document.createElement('div');
+        leftDiv.style.display = 'flex';
+        leftDiv.style.flexDirection = 'column';
+        leftDiv.style.gap = '2px';
+        
+        const nameSpan = document.createElement('span');
+        nameSpan.className = 'vendor-name';
+        nameSpan.textContent = v.vendor;
+        leftDiv.appendChild(nameSpan);
+        
+        if (v.created_at) {
+          const dateSpan = document.createElement('span');
+          dateSpan.className = 'blocked-at';
+          const d = new Date(v.created_at);
+          dateSpan.textContent = `Blocked on ${d.toLocaleDateString(undefined, {month: 'short', day: 'numeric', year: 'numeric'})}`;
+          leftDiv.appendChild(dateSpan);
+        }
+        
+        item.appendChild(leftDiv);
+        
+        const unblockBtn = document.createElement('button');
+        unblockBtn.className = 'btn-icon btn-icon-danger';
+        unblockBtn.innerHTML = '<i class="fa-solid fa-trash-can"></i>';
+        unblockBtn.title = 'Unblock vendor';
+        unblockBtn.addEventListener('click', async () => {
+          try {
+            const res = await apiCall('DELETE', `/api/blocked-vendors/${encodeURIComponent(v.vendor)}`);
+            if (res.ok) {
+              showToast(`Vendor '${v.vendor}' unblocked.`, 'success');
+              loadBlockedVendors();
+            }
+          } catch (err) {
+            console.error(err);
+          }
+        });
+        
+        item.appendChild(unblockBtn);
+        listContainer.appendChild(item);
+      });
+    } catch (err) {
+      listContainer.innerHTML = '<div class="no-data"><p class="text-danger">Failed to load blocklist.</p></div>';
+      console.error(err);
+    }
+  }
 
   // Wire up close buttons
   document.querySelectorAll('[data-close]').forEach(btn => {

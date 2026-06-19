@@ -49,7 +49,10 @@ ONETIME_VENDORS = [
     "בורגר סאלון", "מקדונלדס", "wolt", "מילואים", "עירייה", "פזגז", "איוויס", "avis", 
     "booking", "מזרחי טפחות", "דיסקונט", "לאומי", "פועלים", "פניקס", "מנורה",
     "שירביט", "הראל", "giveback", "escaperoom", "חניאל", "livingreen", "מכבי", "כללית", 
-    "swish", "בהצדעה", "ישראכרט", "cal", "pay-back", "payback"
+    "swish", "בהצדעה", "ישראכרט", "cal", "pay-back", "payback",
+    "gov", "gov.il", "egg", "egg-app", "egged", "moovit", "rav-kav", "ravkav", "אגד", "רב קו",
+    "mast", "מסט", "matnas", "מתנ\"ס", "matnasim", "מרכז קהילתי", "החישוק", "hahishook",
+    "משרד התחבורה", "משרד הפנים", "משרד הרישוי"
 ]
 
 ONETIME_KEYWORDS = [
@@ -73,6 +76,15 @@ PROMO_KEYWORDS = [
     "פרסומת", "מבצע", "הטבה", "ניוזלטר", "newsletter", "replays", "bogo", "off*", 
     "coupon", "promo code", "last chance", "sale ends"
 ]
+
+def get_blocked_vendors(db_path):
+    conn = sqlite3.connect(db_path)
+    c = conn.cursor()
+    c.execute("CREATE TABLE IF NOT EXISTS blocked_vendors (vendor TEXT PRIMARY KEY, created_at TEXT NOT NULL DEFAULT (datetime('now')))")
+    c.execute("SELECT vendor FROM blocked_vendors")
+    rows = c.fetchall()
+    conn.close()
+    return {row[0].lower() for row in rows}
 
 def search_subscription_emails(service, last_scanned_ts=None):
     # Expanded query: searches both subject and body content (no subject: prefix), including Hebrew terms
@@ -432,6 +444,10 @@ def main():
     print("Fetching email threads from Gmail...")
     messages = search_subscription_emails(service, last_scanned_ts)
     
+    # Load blocked vendors
+    blocked_vendors = get_blocked_vendors(DB_PATH)
+    print(f"Loaded {len(blocked_vendors)} blocked vendors: {list(blocked_vendors)}")
+    
     new_seen_ids = []
     new_subs_count = 0
     
@@ -446,6 +462,12 @@ def main():
             new_seen_ids.append(msg_id)
             
             if not sub_details:
+                continue
+                
+            # Blocklist check
+            vendor_name = sub_details['vendor']
+            if vendor_name.lower() in blocked_vendors:
+                print(f"Skipped: Vendor '{vendor_name}' is in blocked vendors list.")
                 continue
             
             # Skip emails where we failed to find a valid price (e.g. false alerts)

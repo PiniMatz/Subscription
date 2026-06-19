@@ -62,7 +62,11 @@
           <h1>Subscription Dashboard</h1>
           <p>Analyze, track, and optimize your recurring expenses.</p>
         </div>
-        <div class="header-actions">
+        <div class="header-actions" style="display: flex; gap: 10px;">
+          <button id="blocklistBtn" class="btn btn-secondary">
+            <i class="fa-solid fa-ban"></i>
+            <span>Blocklist</span>
+          </button>
           <button id="addBtn" class="btn btn-primary">
             <i class="fa-solid fa-plus"></i>
             <span>Add Subscription</span>
@@ -352,11 +356,44 @@
       </div>
       <div class="modal-body">
         <p>Are you sure you want to delete <strong id="deleteSubName"></strong>?</p>
-        <p class="text-danger"><i class="fa-solid fa-triangle-exclamation"></i> This action cannot be undone.</p>
+        <p class="text-danger" style="margin-bottom: 15px;"><i class="fa-solid fa-triangle-exclamation"></i> This action cannot be undone.</p>
+        <div style="display: flex; align-items: center; gap: 8px; margin-top: 15px; background: rgba(255, 255, 255, 0.03); padding: 10px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.05);">
+          <input type="checkbox" id="blockVendorCheckbox" checked style="width: 16px; height: 16px; margin: 0; cursor: pointer;">
+          <label for="blockVendorCheckbox" style="margin: 0; cursor: pointer; font-size: 0.9rem; color: rgba(255, 255, 255, 0.85); font-weight: normal; user-select: none;">Don't scan this vendor in future inbox searches</label>
+        </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-close="deleteModal">Cancel</button>
         <button type="button" id="confirmDeleteBtn" class="btn btn-danger">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Blocklist Modal -->
+  <div id="blocklistModal" class="modal">
+    <div class="modal-content glass">
+      <div class="modal-header">
+        <h3>Managed Blocked Vendors</h3>
+        <button class="close-btn" data-close="blocklistModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.7); margin-bottom: 15px;">
+          Emails from these vendors will be automatically ignored during future inbox scans.
+        </p>
+        
+        <form id="addBlockedVendorForm" style="display: flex; gap: 8px; margin-bottom: 20px;">
+          <input type="text" id="blockedVendorInput" placeholder="Vendor name (e.g. egg)..." required style="flex-grow: 1; margin-bottom: 0;">
+          <button type="submit" class="btn btn-primary" style="padding: 10px 20px; white-space: nowrap;">
+            <i class="fa-solid fa-plus"></i> Block
+          </button>
+        </form>
+
+        <div id="blockedVendorsList" class="blocked-vendors-list" style="max-height: 250px; overflow-y: auto;">
+          <div class="loading-spinner"><i class="fa-solid fa-circle-notch fa-spin"></i> Loading...</div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-close="blocklistModal">Close</button>
       </div>
     </div>
   </div>
