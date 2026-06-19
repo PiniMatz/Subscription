@@ -86,7 +86,7 @@
   async function loadDashboardData() {
     try {
       if (isStaticMode) {
-        const res = await fetch('./subscriptions.json');
+        const res = await fetch('./subscriptions.json?t=' + Date.now());
         allSubscriptions = await res.json();
         renderSubscriptionsList();
         renderRenewalsTimeline();
