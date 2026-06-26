@@ -329,14 +329,32 @@
 
   function setupStaticUI() {
     const addBtn = document.getElementById('addBtn');
-    if (addBtn) addBtn.style.display = 'none';
+    if (addBtn) {
+      addBtn.style.display = 'flex';
+      addBtn.addEventListener('click', (e) => {
+        e.stopImmediatePropagation();
+        openModal('localInstructionsModal');
+      }, { capture: true });
+    }
 
     const scanBtn = document.getElementById('scanBtn');
     if (scanBtn) {
-      scanBtn.disabled = true;
-      scanBtn.style.opacity = '0.5';
-      scanBtn.style.cursor = 'not-allowed';
-      scanBtn.querySelector('span').textContent = 'Scan Disabled (Static)';
+      scanBtn.disabled = false;
+      scanBtn.style.opacity = '1';
+      scanBtn.style.cursor = 'pointer';
+      scanBtn.querySelector('span').textContent = 'Scan Inbox';
+      scanBtn.addEventListener('click', (e) => {
+        e.stopImmediatePropagation();
+        openModal('localInstructionsModal');
+      }, { capture: true });
+    }
+
+    const blocklistBtn = document.getElementById('blocklistBtn');
+    if (blocklistBtn) {
+      blocklistBtn.addEventListener('click', (e) => {
+        e.stopImmediatePropagation();
+        openModal('localInstructionsModal');
+      }, { capture: true });
     }
 
     const statusCard = document.querySelector('.scanner-status-card');

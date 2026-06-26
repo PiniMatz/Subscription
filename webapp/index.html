@@ -398,6 +398,86 @@
     </div>
   </div>
 
+  <!-- Local Instructions Modal -->
+  <div id="localInstructionsModal" class="modal">
+    <div class="modal-content glass modal-md">
+      <div class="modal-header">
+        <h3>Run Scanner & Sync Locally</h3>
+        <button class="close-btn" data-close="localInstructionsModal">&times;</button>
+      </div>
+      <div class="modal-body" style="max-height: 75vh; overflow-y: auto;">
+        <p style="font-size: 0.95rem; color: rgba(255, 255, 255, 0.8); margin-bottom: 20px; line-height: 1.5;">
+          This web application is currently running in <strong>Static Mode</strong> on GitHub Pages. To scan your inbox, add subscriptions, or edit your blocklist, you need to run the application locally on your computer.
+        </p>
+
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+          <!-- Step 1 -->
+          <div>
+            <h4 style="color: var(--accent-cyan); display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 1rem;">
+              <span style="display: flex; align-items: center; justify-content: center; background: rgba(0, 242, 254, 0.1); width: 24px; height: 24px; border-radius: 50%; font-size: 0.85rem;">1</span>
+              Start the Backend Server
+            </h4>
+            <p style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.65); margin-bottom: 8px;">
+              Open your terminal in the project directory and start the Node.js local server:
+            </p>
+            <div class="code-block-wrapper" style="position: relative; background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 12px 12px; font-family: monospace; font-size: 0.85rem; color: #a9b1d6; word-break: break-all; user-select: all;">
+              npm start
+            </div>
+          </div>
+
+          <!-- Step 2 -->
+          <div>
+            <h4 style="color: var(--accent-cyan); display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 1rem;">
+              <span style="display: flex; align-items: center; justify-content: center; background: rgba(0, 242, 254, 0.1); width: 24px; height: 24px; border-radius: 50%; font-size: 0.85rem;">2</span>
+              Open Local Dashboard
+            </h4>
+            <p style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.65); margin-bottom: 8px;">
+              Navigate to the local dashboard in your browser. All interactive features (Scanning, Adding, Deleting, Blocklisting) will be fully enabled:
+            </p>
+            <div style="background: rgba(0, 242, 254, 0.05); border: 1px solid rgba(0, 242, 254, 0.2); border-radius: 8px; padding: 12px; font-size: 0.85rem; display: flex; align-items: center; justify-content: space-between;">
+              <a href="http://localhost:3000" target="_blank" style="color: var(--accent-cyan); text-decoration: none; font-weight: 600; font-family: monospace;">http://localhost:3000</a>
+              <i class="fa-solid fa-up-right-from-square" style="color: var(--accent-cyan); opacity: 0.8;"></i>
+            </div>
+          </div>
+
+          <!-- Step 3 -->
+          <div>
+            <h4 style="color: var(--accent-cyan); display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 1rem;">
+              <span style="display: flex; align-items: center; justify-content: center; background: rgba(0, 242, 254, 0.1); width: 24px; height: 24px; border-radius: 50%; font-size: 0.85rem;">3</span>
+              Run Scanner Manually (Alternative)
+            </h4>
+            <p style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.65); margin-bottom: 8px;">
+              You can also execute the Gmail inbox scanner directly from your terminal:
+            </p>
+            <div style="position: relative; background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 12px; font-family: monospace; font-size: 0.85rem; color: #a9b1d6; margin-bottom: 6px; word-break: break-all; user-select: all;">
+              python scan_inbox.py
+            </div>
+            <p style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5);">
+              To force-rescan your inbox since January 2026: <code style="font-family: monospace; background: rgba(255,255,255,0.05); padding: 2px 4px; border-radius: 4px; color: #f25c54;">python scan_inbox.py --reset</code>
+            </p>
+          </div>
+
+          <!-- Step 4 -->
+          <div>
+            <h4 style="color: var(--accent-cyan); display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 1rem;">
+              <span style="display: flex; align-items: center; justify-content: center; background: rgba(0, 242, 254, 0.1); width: 24px; height: 24px; border-radius: 50%; font-size: 0.85rem;">4</span>
+              Publish Updates to GitHub
+            </h4>
+            <p style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.65); margin-bottom: 8px;">
+              After scanning new items locally, commit and push changes to update your static GitHub Pages site:
+            </p>
+            <div style="position: relative; background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 12px; font-family: monospace; font-size: 0.85rem; color: #a9b1d6; word-break: break-all; user-select: all;">
+              git add data/subs.sqlite webapp/subscriptions.json; git commit -m "Sync subscriptions"; git push
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-close="localInstructionsModal">Got It</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Toast Notification Container -->
   <div id="toastContainer" class="toast-container"></div>
 

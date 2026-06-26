@@ -17,7 +17,7 @@
     "url": "https://hetzner.com",
     "notes": "Imported automatically from Gmail invoice: \"Hetzner Online GmbH - Invoice 085000985712 (K0521211426)\"",
     "created_at": "2026-06-17T04:57:27.114372Z",
-    "updated_at": "2026-06-19T07:36:31.948164Z"
+    "updated_at": "2026-06-19T07:38:19.086459Z"
   },
   {
     "id": 260,
@@ -37,7 +37,7 @@
     "url": "https://mail.anthropic.com",
     "notes": "Imported automatically from Gmail invoice: \"Your receipt from Anthropic, PBC #2598-7551-9817\"",
     "created_at": "2026-06-17T04:57:29.717783Z",
-    "updated_at": "2026-06-19T07:36:34.712953Z"
+    "updated_at": "2026-06-19T07:38:21.723020Z"
   },
   {
     "id": 257,
@@ -57,7 +57,7 @@
     "url": "https://google.com",
     "notes": "Imported automatically from Gmail invoice: \"Google Cloud Platform & APIs: Payment received\"",
     "created_at": "2026-06-17T04:57:27.343898Z",
-    "updated_at": "2026-06-19T07:36:50.688195Z"
+    "updated_at": "2026-06-19T07:38:37.047801Z"
   },
   {
     "id": 258,
@@ -77,7 +77,7 @@
     "url": "https://digitalocean.com",
     "notes": "Imported automatically from Gmail invoice: \"DigitalOcean - Received $1.69 payment\"",
     "created_at": "2026-06-17T04:57:27.966222Z",
-    "updated_at": "2026-06-19T07:36:51.131634Z"
+    "updated_at": "2026-06-19T07:38:37.494860Z"
   },
   {
     "id": 265,
@@ -97,7 +97,7 @@
     "url": "https://tx.zety.com",
     "notes": "Imported automatically from Gmail invoice: \"Thank you for your order!\"",
     "created_at": "2026-06-17T04:57:33.156374Z",
-    "updated_at": "2026-06-19T07:36:53.118523Z"
+    "updated_at": "2026-06-19T07:38:39.404320Z"
   },
   {
     "id": 261,
@@ -117,7 +117,7 @@
     "url": "https://paypal.co.il",
     "notes": "Imported automatically from Gmail invoice: \"Receipt for Your Payment to Moremins Ltd\"",
     "created_at": "2026-06-17T04:57:30.155657Z",
-    "updated_at": "2026-06-19T07:36:54.790384Z"
+    "updated_at": "2026-06-19T07:38:41.041966Z"
   },
   {
     "id": 279,
@@ -137,7 +137,7 @@
     "url": "https://railway.app",
     "notes": "Imported automatically from Gmail invoice: \"Your receipt from Railway Corporation #2228-3006\"",
     "created_at": "2026-06-17T04:57:50.008628Z",
-    "updated_at": "2026-06-19T07:36:55.664575Z"
+    "updated_at": "2026-06-19T07:38:41.926102Z"
   },
   {
     "id": 266,
@@ -157,7 +157,7 @@
     "url": "https://paypal.co.il",
     "notes": "Imported automatically from Gmail invoice: \"Receipt for Your Payment to Netflix.com\"",
     "created_at": "2026-06-17T04:57:33.609504Z",
-    "updated_at": "2026-06-19T07:37:09.708565Z"
+    "updated_at": "2026-06-19T07:38:56.159304Z"
   },
   {
     "id": 254,
@@ -177,7 +177,7 @@
     "url": "https://paypal.co.il",
     "notes": "Imported automatically from Gmail invoice: \"Receipt for Your Payment to Spotify AB\"",
     "created_at": "2026-06-17T04:57:22.303738Z",
-    "updated_at": "2026-06-19T07:37:13.090790Z"
+    "updated_at": "2026-06-19T07:38:59.485531Z"
   },
   {
     "id": 255,
@@ -197,7 +197,7 @@
     "url": "https://paypal.co.il",
     "notes": "Imported automatically from Gmail invoice: \"Receipt for Your Payment to Meta Platforms Techn...\"",
     "created_at": "2026-06-17T04:57:26.278892Z",
-    "updated_at": "2026-06-19T07:37:15.855181Z"
+    "updated_at": "2026-06-19T07:39:02.113865Z"
   },
   {
     "id": 259,
@@ -217,6 +217,6 @@
     "url": "https://paypal.co.il",
     "notes": "Imported automatically from Gmail invoice: \"You sent an automatic payment to Kvuzat Shorashim\"",
     "created_at": "2026-06-17T04:57:29.277448Z",
-    "updated_at": "2026-06-19T07:37:16.478881Z"
+    "updated_at": "2026-06-19T07:39:02.711504Z"
   }
 ]
