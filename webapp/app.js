@@ -23,6 +23,26 @@
     'GBP': 1.28
   };
 
+  // Helper to parse "YYYY-MM-DD" string as a local Date at midnight
+  function parseLocalDate(dateStr) {
+    if (!dateStr) return null;
+    const parts = dateStr.split('-');
+    if (parts.length !== 3) return new Date(dateStr);
+    const year = parseInt(parts[0], 10);
+    const month = parseInt(parts[1], 10) - 1;
+    const day = parseInt(parts[2], 10);
+    return new Date(year, month, day);
+  }
+
+  // Helper to format Date object as local "YYYY-MM-DD"
+  function formatDateToYYYYMMDD(date) {
+    if (!date) return '';
+    const yyyy = date.getFullYear();
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const dd = String(date.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  }
+
   // State cache for filters and active data
   let allSubscriptions = [];
   let deleteTargetId = null;
@@ -479,11 +499,11 @@
     const months = {};
     
     // Find oldest started_at date (default to Jan 2026 if empty or newer)
-    let startDate = new Date('2026-01-01');
+    let startDate = new Date(2026, 0, 1);
     filtered.forEach(sub => {
       if (sub.started_at) {
-        const d = new Date(sub.started_at);
-        if (!isNaN(d.getTime()) && d < startDate) {
+        const d = parseLocalDate(sub.started_at);
+        if (d && !isNaN(d.getTime()) && d < startDate) {
           startDate = new Date(d.getFullYear(), d.getMonth(), 1);
         }
       }
@@ -501,7 +521,7 @@
       // Find subscriptions active in this month
       filtered.forEach(sub => {
         if (sub.started_at) {
-          const subStart = new Date(sub.started_at);
+          const subStart = parseLocalDate(sub.started_at);
           const subStartMonth = new Date(subStart.getFullYear(), subStart.getMonth(), 1);
           if (subStartMonth <= current) {
             months[monthKey].push(sub);
@@ -557,7 +577,7 @@
         const trialWarning = sub.status === 'trial' && sub.trial_ends_at
           ? `<div class="trial-alert-bar">
               <i class="fa-solid fa-hourglass-half"></i>
-              <span>Trial ends: ${new Date(sub.trial_ends_at).toLocaleDateString()}</span>
+              <span>Trial ends: ${parseLocalDate(sub.trial_ends_at).toLocaleDateString()}</span>
              </div>`
           : '';
 
@@ -649,13 +669,13 @@
 
       // Use next_charge_at if set explicitly
       if (sub.next_charge_at) {
-        chargeDate = new Date(sub.next_charge_at);
+        chargeDate = parseLocalDate(sub.next_charge_at);
       } else if (sub.status === 'trial' && sub.trial_ends_at) {
         // Trials charge on end date
-        chargeDate = new Date(sub.trial_ends_at);
+        chargeDate = parseLocalDate(sub.trial_ends_at);
       } else if (sub.started_at) {
         // Calculate based on cycle
-        const start = new Date(sub.started_at);
+        const start = parseLocalDate(sub.started_at);
         chargeDate = new Date(start);
 
         // Advance charge date until it is >= today
@@ -705,13 +725,13 @@
     // Group by Date for cleaner presentation
     const groupedByDate = {};
     upcomingCharges.forEach(item => {
-      const key = item.date.toISOString().substring(0, 10);
+      const key = formatDateToYYYYMMDD(item.date);
       if (!groupedByDate[key]) groupedByDate[key] = [];
       groupedByDate[key].push(item);
     });
 
     for (const [dateStr, items] of Object.entries(groupedByDate)) {
-      const d = new Date(dateStr);
+      const d = parseLocalDate(dateStr);
       const isToday = d.getTime() === today.getTime();
       const dateLabel = isToday 
         ? "Today" 
