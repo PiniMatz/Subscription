@@ -15,9 +15,14 @@ def main():
     
     # If there are no valid credentials available, let the user log in.
     if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
+        try:
+            if creds and creds.expired and creds.refresh_token:
+                creds.refresh(Request())
+        except Exception as e:
+            print(f"Token refresh failed: {e}. Re-authenticating...")
+            creds = None
+            
+        if not creds or not creds.valid:
             if not os.path.exists('credentials.json'):
                 print("Error: credentials.json not found! Please place it in the project root.")
                 return
